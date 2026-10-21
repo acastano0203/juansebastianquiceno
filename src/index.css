@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/* Paleta del diseño "Sistema de captación — Juan Sebastián Quiceno" */
+@theme {
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-serif: Fraunces, Georgia, serif;
+
+  --color-ink: #123638;
+  --color-ink-2: #1c4a4c;
+  --color-ink-3: #2c5e60;
+  --color-ink-4: #4f7a7b;
+  --color-sage: #b8d8b8;
+  --color-sage-2: #7fb07f;
+  --color-mist: #f3f8f3;
+  --color-mist-2: #eaf2ea;
+  --color-mist-3: #e6f0e6;
+  --color-line: #d9e6dc;
+  --color-line-2: #e3eee4;
+  --color-gold: #ddbd62;
+  --color-clay: #995837;
+  --color-clay-dark: #7a4429;
+  --color-clay-ink: #3d2618;
+  --color-clay-bg: #f7eee8;
+  --color-clay-pale: #f6e9e1;
+  --color-muted: #4a6364;
+  --color-pale: #d6e6d8;
+  --color-pale-2: #e6efe7;
+  --color-faint: #8fb3a6;
+  --color-off: #9aaba4;
+  --color-good: #2e6b3a;
+}
+
+@layer base {
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  a {
+    color: inherit;
+  }
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .field {
+    @apply min-h-[50px] rounded-[14px] border-[1.5px] border-line px-4 text-[15px] font-normal text-ink transition-colors;
+  }
+  .field:focus {
+    @apply border-ink outline-none;
+    box-shadow: 0 0 0 3px rgba(184, 216, 184, 0.6);
+  }
+  .cta-lift {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cta-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(221, 189, 98, 0.35);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only-root {
+    box-shadow: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}
