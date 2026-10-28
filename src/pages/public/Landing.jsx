@@ -2,6 +2,7 @@ import Hero from '../../components/public/Hero';
 import HowItWorks from '../../components/public/HowItWorks';
 import Areas from '../../components/public/Areas';
 import CtaBand from '../../components/public/CtaBand';
+import CubicajeBand from '../../components/public/CubicajeBand';
 import SiteFooter from '../../components/public/SiteFooter';
 
 export default function Landing() {
@@ -10,6 +11,7 @@ export default function Landing() {
       <Hero />
       <HowItWorks />
       <Areas />
+      <CubicajeBand />
       <CtaBand />
       <SiteFooter />
     </div>

@@ -78,6 +78,9 @@ export default function Confirmation({ lead, onReschedule }) {
               </li>
             ))}
           </ol>
+          <Link to={`/cubicaje?p=${lead.id}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-gold">
+            {t('cub.pub.desdeDiag')}
+          </Link>
           <Link to="/" className="mt-1.5 inline-flex min-h-11 items-center text-sm text-sage">
             {t('conf.home')}
           </Link>

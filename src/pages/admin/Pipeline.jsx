@@ -5,6 +5,7 @@ import { DAY_MS, fechaLarga, money, startOfDay } from '../../lib/format';
 import { useI18n } from '../../i18n/LanguageContext';
 import PageHeader, { Stat } from '../../components/admin/PageHeader';
 import LeadCard from '../../components/admin/LeadCard';
+import { cubicajesDeLead, useCubicajes } from '../../data/useCubicajes';
 import { Search } from '../../components/ui/Icons';
 
 const FILTROS = ['Todos', ...Object.keys(TIPOS)];
@@ -15,6 +16,7 @@ function normalizar(s) {
 
 export default function Pipeline() {
   const { leads, moveLead, resetDemo } = useLeads();
+  const { lista: cubicajes } = useCubicajes();
   const { t, lang } = useI18n();
   const proximo = useProximoLead();
   const [filtro, setFiltro] = useState('Todos');
@@ -112,6 +114,7 @@ export default function Pipeline() {
                   <LeadCard
                     key={l.id}
                     lead={l}
+                    cubicajes={cubicajesDeLead(cubicajes, l)}
                     destacado={l.stage === 2 && proximo?.id === l.id}
                     onDragStart={setDragging}
                     onDragEnd={() => {

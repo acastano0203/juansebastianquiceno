@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
 import Brand from '../ui/Brand';
 import { ButtonLink } from '../ui/Button';
@@ -9,8 +10,8 @@ export default function SiteHeader() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const links = [
-    { href: '#como', label: t('nav.how') },
-    { href: '#areas', label: t('nav.areas') },
+    { href: '/#como', label: t('nav.how') },
+    { href: '/#areas', label: t('nav.areas') },
   ];
 
   return (
@@ -22,6 +23,9 @@ export default function SiteHeader() {
             {l.label}
           </a>
         ))}
+        <Link to="/cubicaje" className="text-pale no-underline hover:text-white">
+          {t('nav.cubicaje')}
+        </Link>
         <LanguageSwitcher />
         <ButtonLink to="/diagnostico" variant="outline-gold" size="md" lift className="px-[22px]">
           {t('nav.cta')}
@@ -46,6 +50,9 @@ export default function SiteHeader() {
               {l.label}
             </a>
           ))}
+          <Link to="/cubicaje" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
+            {t('nav.cubicaje')}
+          </Link>
           <ButtonLink to="/diagnostico" variant="gold" size="md" className="mt-1">
             {t('nav.cta')}
           </ButtonLink>

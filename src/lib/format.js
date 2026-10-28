@@ -15,6 +15,11 @@ export function money(n) {
   return '$' + Math.round(n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+// Número con separadores locales: 1.946.210,5 en español, 1,946,210.5 en inglés
+export function num(n, decimales = 0, lang = 'es') {
+  return new Intl.NumberFormat(lang === 'en' ? 'en-US' : 'es-CO', { minimumFractionDigits: decimales, maximumFractionDigits: decimales }).format(n || 0);
+}
+
 export function monthName(m, lang = 'es') {
   return MESES[lang][m];
 }

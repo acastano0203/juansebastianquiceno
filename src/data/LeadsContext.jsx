@@ -118,9 +118,54 @@ export function LeadsProvider({ children }) {
     return lead;
   }, []);
 
+  // Cliente que genera un cubicaje desde la landing. Reutiliza el prospecto si ya existe
+  // (llegó desde el diagnóstico o su WhatsApp coincide); si no, crea uno nuevo en la columna «Nuevo».
+  const registrarCubicaje = useCallback(
+    ({ leadId, nombre, whatsapp, correo }) => {
+      const now = new Date().toISOString();
+      const digitos = (x) => (x || '').replace(/\D/g, '').slice(-10);
+      const existente = leads.find((l) => l.id === leadId) || (digitos(whatsapp).length >= 7 && leads.find((l) => digitos(l.whatsapp) === digitos(whatsapp)));
+      if (existente) {
+        setLeads((ls) =>
+          ls.map((l) => (l.id === existente.id ? { ...l, correo: l.correo || correo || '', activity: [...(l.activity || []), { k: 'cubicaje', at: now }] } : l)),
+        );
+        return existente.id;
+      }
+      const answers = { area: 'comex' };
+      const lead = {
+        id: slug(nombre) + '-' + Date.now().toString(36),
+        stage: 0,
+        nombre: nombre.trim(),
+        tipoLabel: '',
+        lugar: '',
+        answers,
+        score: puntaje(answers),
+        createdAt: now,
+        cita: null,
+        fuente: 'Cubicaje',
+        whatsapp: whatsapp.trim(),
+        correo: correo || '',
+        valor: 0,
+        detalles: null,
+        alertas: null,
+        cita_texto: null,
+        preguntasHechas: {},
+        propuesta: null,
+        nuevo: true,
+        activity: [{ k: 'cubicaje', at: now }],
+      };
+      setLeads((ls) => [lead, ...ls]);
+      return lead.id;
+    },
+    [leads],
+  );
+
   const resetDemo = useCallback(() => setLeads(seedLeads()), []);
 
-  const value = useMemo(() => ({ leads, updateLead, moveLead, addLead, resetDemo }), [leads, updateLead, moveLead, addLead, resetDemo]);
+  const value = useMemo(
+    () => ({ leads, updateLead, moveLead, addLead, registrarCubicaje, resetDemo }),
+    [leads, updateLead, moveLead, addLead, registrarCubicaje, resetDemo],
+  );
   return <LeadsContext.Provider value={value}>{children}</LeadsContext.Provider>;
 }
 

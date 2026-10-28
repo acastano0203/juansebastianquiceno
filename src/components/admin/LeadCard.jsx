@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { TIPOS, getArea, tipoDeLead } from '../../data/catalog';
 import { useI18n } from '../../i18n/LanguageContext';
 import { fechaCorta, haceCuanto, hora, money } from '../../lib/format';
+import { Cubo } from '../cubicaje/PaqueteIcono';
 
 export function ScoreBadge({ score }) {
   const { t } = useI18n();
@@ -20,7 +21,7 @@ function meta(lead, t, lang) {
   return lead.valor ? money(lead.valor) : t('card.noValue');
 }
 
-export default function LeadCard({ lead, destacado, onDragStart, onDragEnd }) {
+export default function LeadCard({ lead, destacado, cubicajes = [], onDragStart, onDragEnd }) {
   const { t, lang } = useI18n();
   const tipo = TIPOS[lead.answers.perfil] || TIPOS.empresario;
 
@@ -53,6 +54,17 @@ export default function LeadCard({ lead, destacado, onDragStart, onDragEnd }) {
           {tipoDeLead(lead, lang)}
         </span>
         {lead.nuevo && <span className="rounded-full bg-gold/30 px-2.5 py-1 text-xs font-medium">{t('card.fromLanding')}</span>}
+        {cubicajes.length > 0 && (
+          <Link
+            to={`/admin/cubicaje/${cubicajes[0].id}`}
+            title={t('cub.marca.tarjetaT', { n: cubicajes.length })}
+            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-2.5 py-1 text-xs font-semibold text-white no-underline hover:bg-ink-2"
+          >
+            <Cubo size={13} />
+            {t('cub.marca.tarjeta')}
+            {cubicajes.length > 1 && ` · ${cubicajes.length}`}
+          </Link>
+        )}
       </div>
       <span className="text-[13px] leading-[1.4]">{getArea(lead.answers.area, lang).nombre}</span>
       <div className="flex items-center justify-between gap-2 border-t border-line-2 pt-2.5 text-xs text-muted">

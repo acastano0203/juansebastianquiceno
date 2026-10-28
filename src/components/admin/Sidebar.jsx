@@ -3,12 +3,19 @@ import { useAuth } from '../../lib/AuthContext';
 import { useI18n } from '../../i18n/LanguageContext';
 import { Board, Chart, Doc, Logout, Pen } from '../ui/Icons';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
+import { Cubo } from '../cubicaje/PaqueteIcono';
 
 const NAV = [
   { to: '/admin', end: true, key: 'pipeline', Icon: Board },
   { to: '/admin/briefs', key: 'briefs', Icon: Doc, prefix: '/admin/prospectos' },
   { to: '/admin/propuestas', key: 'proposals', Icon: Pen },
   { to: '/admin/resultados', key: 'results', Icon: Chart },
+];
+
+const CUBICAJE_SUB = [
+  { to: '/admin/cubicaje', end: true, key: 'resumen' },
+  { to: '/admin/cubicaje/lista', key: 'lista' },
+  { to: '/admin/cubicaje/nuevo', key: 'nuevo' },
 ];
 
 export default function Sidebar() {
@@ -44,6 +51,37 @@ export default function Sidebar() {
             {t('side.' + key)}
           </NavLink>
         ))}
+        <NavLink
+          to="/admin/cubicaje"
+          className={({ isActive }) =>
+            'flex min-h-11 items-center gap-3 rounded-xl px-3 no-underline hover:bg-ink-2 hover:text-white ' + (isActive ? 'bg-ink-2 font-semibold text-white' : 'text-sage')
+          }
+        >
+          <Cubo />
+          {t('cub.menu')}
+        </NavLink>
+        {pathname.startsWith('/admin/cubicaje') && (
+          <div className="flex basis-full flex-row gap-0.5 overflow-x-auto text-sm lg:mt-0.5 lg:ml-[21px] lg:basis-auto lg:flex-col lg:flex-nowrap lg:border-l lg:border-ink-3 lg:pl-[18px]">
+            {CUBICAJE_SUB.map(({ to, end, key }) => (
+              <NavLink
+                key={key}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  'flex min-h-11 items-center gap-2 border-b-[3px] px-3.5 whitespace-nowrap no-underline hover:text-white lg:min-h-10 lg:border-b-0 lg:px-0 ' +
+                  (isActive ? 'border-gold font-semibold text-white' : 'border-transparent text-sage lg:pl-3.5')
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {isActive && <span aria-hidden="true" className="hidden size-1.5 rounded-[0_3px_0_3px] bg-gold lg:block" />}
+                    {t('cub.sub.' + key)}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        )}
       </nav>
       <div className="flex flex-col gap-4 lg:mt-auto">
         <div className="hidden px-2.5 lg:block">

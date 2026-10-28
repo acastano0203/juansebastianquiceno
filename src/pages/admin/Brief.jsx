@@ -8,6 +8,10 @@ import RootLines from '../../components/ui/RootLines';
 import { Alert, Clock, Message, Video } from '../../components/ui/Icons';
 import { ButtonLink } from '../../components/ui/Button';
 import WhatsAppDialog from '../../components/admin/WhatsAppPreview';
+import { cubicajesDeLead, useCubicajes } from '../../data/useCubicajes';
+import { getContenedor } from '../../cubicaje/config';
+import { EstadoBadge } from '../../components/cubicaje/CubicajeUI';
+import { num } from '../../lib/format';
 
 function Card({ title, aside, children, className = '' }) {
   return (
@@ -43,6 +47,7 @@ export default function Brief() {
   const { updateLead, moveLead } = useLeads();
   const { t, lang } = useI18n();
   const [whatsapp, setWhatsapp] = useState(false);
+  const { lista: todosCubicajes } = useCubicajes();
 
   if (!lead) return <Navigate to="/admin" replace />;
 
@@ -194,6 +199,28 @@ export default function Brief() {
               })}
             </ol>
           </Card>
+          {cubicajesDeLead(todosCubicajes, lead).length > 0 && (
+            <Card title={t('cub.marca.briefT')} aside={<span className="text-xs text-muted">{t('cub.marca.briefD')}</span>}>
+              <div className="flex flex-col">
+                {cubicajesDeLead(todosCubicajes, lead).map((c) => {
+                  const m = c.resultado?.metricas;
+                  return (
+                    <Link key={c.id} to={`/admin/cubicaje/${c.id}`} className="-mx-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border-t border-line-2 px-3 py-3.5 text-ink no-underline first:border-t-0 hover:bg-mist">
+                      <span className="flex min-w-0 flex-[999_1_220px] flex-col gap-0.5">
+                        <span className="text-[15px] font-semibold">{c.nombre}</span>
+                        <span className="text-xs text-muted">
+                          {getContenedor(c.tipoContenedor)?.nombre} · {t('cub.dash.cajas', { n: num(c.productos.reduce((s2, p) => s2 + p.cantidad, 0), 0, lang) })}
+                          {m && ` · ${num(m.ocupacion, 0, lang)} % · ${num(m.pesoTotal, 0, lang)} kg`}
+                        </span>
+                      </span>
+                      <EstadoBadge estado={c.estado} />
+                      <span className="text-sm font-semibold">{t('cub.marca.ver')}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
         </div>
 
         <div className="flex min-w-0 flex-[1_1_340px] flex-col gap-6">

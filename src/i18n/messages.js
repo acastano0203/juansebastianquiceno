@@ -1,9 +1,10 @@
 // Textos de la interfaz. Las claves se usan con t('seccion.clave', { variables }).
+import { CUB_MESSAGES } from './cubicaje';
 export const MESSAGES = {
   es: {
     lang: { label: 'Idioma', es: 'Español', en: 'English' },
     brand: { sub: 'Consultoría estratégica', panel: 'Panel de prospectos' },
-    nav: { how: 'Cómo funciona', areas: 'Áreas', cta: 'Hacer diagnóstico', open: 'Abrir menú', close: 'Cerrar menú', main: 'Principal' },
+    nav: { how: 'Cómo funciona', areas: 'Áreas', cubicaje: 'Calcular cubicaje', cta: 'Hacer diagnóstico', open: 'Abrir menú', close: 'Cerrar menú', main: 'Principal' },
     hero: {
       eyebrow: 'Café · Comercio exterior · Supply chain · Inversión',
       title1: 'Antes de decidir, ',
@@ -178,6 +179,7 @@ export const MESSAGES = {
       cerrado: 'Cerrado',
       nuevo: 'Devuelto a nuevo',
       reagendo: 'Cambió el horario de la llamada',
+      cubicaje: 'Generó un cubicaje',
     },
     wa: { dialog: 'Mensajes de WhatsApp', close: 'Cerrar vista previa', note: 'Los mensajes se envían en español.' },
     prop: {
@@ -229,12 +231,13 @@ export const MESSAGES = {
       months: ['Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'],
       of: 'de ',
     },
+    cub: CUB_MESSAGES.es,
   },
 
   en: {
     lang: { label: 'Language', es: 'Español', en: 'English' },
     brand: { sub: 'Strategy consulting', panel: 'Lead panel' },
-    nav: { how: 'How it works', areas: 'Services', cta: 'Take the assessment', open: 'Open menu', close: 'Close menu', main: 'Main' },
+    nav: { how: 'How it works', areas: 'Services', cubicaje: 'Load calculator', cta: 'Take the assessment', open: 'Open menu', close: 'Close menu', main: 'Main' },
     hero: {
       eyebrow: 'Coffee · Foreign trade · Supply chain · Investment',
       title1: 'Before you decide, ',
@@ -409,6 +412,7 @@ export const MESSAGES = {
       cerrado: 'Closed',
       nuevo: 'Moved back to new',
       reagendo: 'Changed the call time',
+      cubicaje: 'Generated a load plan',
     },
     wa: { dialog: 'WhatsApp messages', close: 'Close preview', note: 'Messages are sent in Spanish.' },
     prop: {
@@ -460,5 +464,6 @@ export const MESSAGES = {
       months: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
       of: 'for ',
     },
+    cub: CUB_MESSAGES.en,
   },
 };
