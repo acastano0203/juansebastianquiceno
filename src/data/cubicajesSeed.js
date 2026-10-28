@@ -18,8 +18,6 @@ const CARGAS = [
 const DESTINOS = ['Miami', 'Hamburgo', 'Rotterdam', 'Guayaquil', 'Ciudad de Panamá', 'Valencia', 'Houston', 'Yokohama', 'Amberes', 'Veracruz', 'Montreal', 'Busan'];
 // Cubicajes creados por mes, del más antiguo al mes en curso
 const POR_MES = [3, 4, 3, 4, 5, 6, 5, 6, 7, 8, 9, 7];
-// Prospectos de ejemplo de comercio exterior que dejaron su cubicaje en el diagnóstico
-const DIAGNOSTICO = ['carlos-rivera', 'santiago-velez', 'luisa-ortiz'];
 
 function rng(seed) {
   let s = seed;
@@ -59,14 +57,13 @@ export async function generarEjemplos(ahora = new Date()) {
       }));
       const fecha = new Date(mes.getFullYear(), mes.getMonth(), Math.max(1, Math.round(diasMes - (k + 0.5) * (diasMes / POR_MES[i]))), 9 + (n % 8), (n * 7) % 60);
       const borrador = n % 11 === 6;
-      const diag = n % 13 === 3 && DIAGNOSTICO.length > out.filter((c) => c.origen === 'diagnostico').length;
       const resultado = borrador ? null : await calcularAsync(tipo, productos);
       out.push({
         id: 'ej-' + String(n + 1).padStart(3, '0'),
         nombre: elegidas[0].nombre.split(' · ')[0] + ' — ' + DESTINOS[Math.floor(r() * DESTINOS.length)],
         tipoContenedor: tipo,
-        origen: diag ? 'diagnostico' : 'admin',
-        prospectoId: diag ? DIAGNOSTICO[out.filter((c) => c.origen === 'diagnostico').length] : null,
+        origen: 'admin',
+        prospectoId: null,
         estado: estadoDe(resultado),
         productos,
         resultado,

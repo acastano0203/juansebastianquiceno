@@ -18,7 +18,7 @@ export function AsideShell({ children }) {
   );
 }
 
-export default function StepsAside({ step, answers, reached, onGoto }) {
+export default function StepsAside({ step, answers, reached, onGoto, cubicaje }) {
   const { t, lang } = useI18n();
   return (
     <AsideShell>
@@ -56,6 +56,31 @@ export default function StepsAside({ step, answers, reached, onGoto }) {
             </li>
           );
         })}
+        {cubicaje && (
+          <li>
+            <button
+              type="button"
+              disabled={reached < 6}
+              onClick={() => onGoto(6)}
+              className="group flex w-full items-center gap-4 border-0 bg-transparent py-2.5 text-left text-inherit enabled:cursor-pointer"
+            >
+              <span
+                className={
+                  'flex size-[34px] flex-none items-center justify-center rounded-full border-[1.5px] text-xs font-semibold ' +
+                  (cubicaje.estado === 'listo' && step !== 6 ? 'border-gold bg-gold text-ink' : step === 6 ? 'border-white text-white' : 'border-ink-4 text-faint')
+                }
+              >
+                {cubicaje.estado === 'listo' && step !== 6 ? <Check size={16} /> : '07'}
+              </span>
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className={'text-[15px] font-semibold group-enabled:group-hover:underline ' + (step === 6 || cubicaje.estado !== 'pendiente' ? 'text-white' : 'text-faint')}>
+                  {t('cub.diag.label')}
+                </span>
+                <span className={'truncate text-[13px] ' + (cubicaje.estado === 'listo' ? 'text-sage' : 'text-faint')}>{cubicaje.texto}</span>
+              </span>
+            </button>
+          </li>
+        )}
       </ol>
       <p className="relative m-0 mt-auto text-[13px] leading-[1.5] text-faint">{t('diag.privacy')}</p>
     </AsideShell>

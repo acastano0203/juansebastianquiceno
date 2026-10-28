@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
-import { useLeads } from '../../data/LeadsContext';
+import { nuevoLeadId, useLeads } from '../../data/LeadsContext';
 import { cubicajesRepo, usaSupabase } from '../../data/cubicajesRepo';
 import { CONTENEDOR_DEFAULT } from '../../cubicaje/config';
 import { fechaConAnio } from '../../lib/format';
@@ -129,7 +129,7 @@ function VistaImpresion({ cubicaje, contacto, imagen }) {
 
 export default function CubicajePublico() {
   const { t, lang } = useI18n();
-  const { leads, registrarCubicaje } = useLeads();
+  const { leads, resolverLead, registrarCubicaje } = useLeads();
   const [params] = useSearchParams();
   // Desde la confirmación del diagnóstico llega el id del prospecto para no volver a pedir los datos
   const leadDiag = leads.find((l) => l.id === params.get('p')) || null;
@@ -176,6 +176,8 @@ export default function CubicajePublico() {
     setEnviando(true);
     setError(null);
     const nombre = valor.nombre.trim() || t('cub.nombreDefault', { f: fechaConAnio(new Date(), lang) });
+    // El id del prospecto se decide antes de guardar, para que el cubicaje quede vinculado también en el servidor
+    const leadId = resolverLead({ leadId: leadDiag?.id, whatsapp: contacto.whatsapp }) || nuevoLeadId(contacto.nombre);
     try {
       const g = await cubicajesRepo.crearPublico({
         id: !usaSupabase ? guardado?.id : undefined,
@@ -184,11 +186,9 @@ export default function CubicajePublico() {
         productos: valor.productos,
         resultado,
         contacto,
-        prospectoId: leadDiag?.id || null,
+        prospectoId: leadId,
       });
-      const leadId = registrarCubicaje({ leadId: leadDiag?.id, ...contacto });
-      // En modo local el prospecto vive en este navegador: se enlaza directo
-      if (!usaSupabase && g.prospectoId !== leadId) await cubicajesRepo.guardar({ ...g, prospectoId: leadId });
+      registrarCubicaje({ leadId, ...contacto });
       const cubicaje = { nombre, productos: valor.productos, resultado: g.resultado || resultado };
       const nuevo = { id: g.id, clave, contacto, cubicaje };
       setGuardado(nuevo);

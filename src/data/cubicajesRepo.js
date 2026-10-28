@@ -90,9 +90,9 @@ const local = {
   async eliminarTodos() {
     escribir([]);
   },
-  // Cubicaje del cliente desde la landing: en local se guarda igual que en el panel
+  // Cubicaje del cliente (calculadora de la landing o paso 7 del diagnóstico): en local se guarda igual que en el panel
   async crearPublico(c) {
-    return this.guardar({ ...c, origen: 'landing' });
+    return this.guardar({ ...c, origen: c.origen === 'diagnostico' ? 'diagnostico' : 'landing' });
   },
   // Reemplaza todo (datos de ejemplo)
   async reemplazar(lista) {
@@ -229,7 +229,7 @@ const remoto = {
     const res = await fetch(`${URL}/functions/v1/cubicaje-publico`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: ANON, Authorization: `Bearer ${ANON}` },
-      body: JSON.stringify({ nombre: c.nombre, tipoContenedor: c.tipoContenedor, productos: c.productos, contacto: c.contacto, prospectoId: c.prospectoId }),
+      body: JSON.stringify({ nombre: c.nombre, tipoContenedor: c.tipoContenedor, productos: c.productos, contacto: c.contacto, prospectoId: c.prospectoId, origen: c.origen }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw Object.assign(new Error(data.error || 'error'), { status: res.status });

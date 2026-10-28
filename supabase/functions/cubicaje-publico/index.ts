@@ -1,4 +1,4 @@
-// Endpoint público: guarda el cubicaje que un cliente genera desde la landing.
+// Endpoint público: guarda el cubicaje que un cliente genera desde la landing o en el paso 7 del diagnóstico.
 // - Valida todo de nuevo con los límites públicos (no confía en el navegador)
 // - Recalcula el acomodo en el servidor (el resultado del cliente se ignora)
 // - Rate limit por IP
@@ -82,7 +82,8 @@ Deno.serve(async (req) => {
     .insert({
       nombre,
       tipo_contenedor: tipoContenedor,
-      origen: 'landing',
+      // Calculadora de la landing o paso 7 del diagnóstico; cualquier otro valor cuenta como landing
+      origen: body.origen === 'diagnostico' ? 'diagnostico' : 'landing',
       prospecto_id: texto(body.prospectoId, 80) || null,
       contacto: contacto.valor,
       estado: resultado.noColocadas.length ? 'excede' : 'listo',

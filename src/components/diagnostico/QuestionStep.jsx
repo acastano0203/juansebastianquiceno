@@ -4,28 +4,37 @@ import { useI18n } from '../../i18n/LanguageContext';
 import { Button } from '../ui/Button';
 import { ArrowRight, Check } from '../ui/Icons';
 
+// Total de pasos del diagnóstico: 6 preguntas + el cubicaje (opcional)
+export const PASOS_DIAGNOSTICO = 7;
+
+export function ProgresoDiag({ step }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-4 text-sm">
+        <span className="font-semibold">{t('diag.step', { n: step + 1 })}</span>
+        <Link to="/" className="inline-flex min-h-11 items-center text-muted no-underline">
+          {t('diag.exit')}
+        </Link>
+      </div>
+      <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={PASOS_DIAGNOSTICO} aria-valuenow={step + 1} aria-label={t('diag.progress')}>
+        {Array.from({ length: PASOS_DIAGNOSTICO }, (_, i) => (
+          <span key={i} className={'h-1.5 flex-1 rounded-full transition-colors duration-300 ' + (i <= step ? 'bg-gold' : 'bg-line-2')} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function QuestionStep({ step, answers, onChoose, onBack, onNext }) {
   const { t, lang } = useI18n();
   const questions = getQuestions(lang);
   const q = questions[step];
   const sel = answers[q.key];
-  const last = step === questions.length - 1;
 
   return (
     <main className="box-border flex min-w-0 flex-[999_1_560px] flex-col gap-12 px-[22px] pt-10 pb-14 md:px-[72px]">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-4 text-sm">
-          <span className="font-semibold">{t('diag.step', { n: step + 1 })}</span>
-          <Link to="/" className="inline-flex min-h-11 items-center text-muted no-underline">
-            {t('diag.exit')}
-          </Link>
-        </div>
-        <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={6} aria-valuenow={step + 1} aria-label={t('diag.progress')}>
-          {questions.map((qq, i) => (
-            <span key={qq.key} className={'h-1.5 flex-1 rounded-full transition-colors duration-300 ' + (i <= step ? 'bg-gold' : 'bg-line-2')} />
-          ))}
-        </div>
-      </div>
+      <ProgresoDiag step={step} />
 
       <div className="flex max-w-[760px] flex-col gap-3.5">
         <span className="font-serif text-[22px] text-clay italic">{t('diag.question', { n: String(step + 1).padStart(2, '0') })}</span>
@@ -72,7 +81,7 @@ export default function QuestionStep({ step, answers, onChoose, onBack, onNext }
           {t('diag.back')}
         </button>
         <Button variant="gold" size="xl" onClick={onNext} disabled={!sel}>
-          {last ? t('diag.seeResult') : t('diag.next')}
+          {t('diag.next')}
           <ArrowRight />
         </Button>
       </div>

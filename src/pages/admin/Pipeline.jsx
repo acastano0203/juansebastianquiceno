@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TIPOS, getStages, tipoNombre } from '../../data/catalog';
 import { useLeads, useProximoLead } from '../../data/LeadsContext';
 import { DAY_MS, fechaLarga, money, startOfDay } from '../../lib/format';
 import { useI18n } from '../../i18n/LanguageContext';
 import PageHeader, { Stat } from '../../components/admin/PageHeader';
 import LeadCard from '../../components/admin/LeadCard';
+import LeadDialog from '../../components/admin/LeadDialog';
 import { cubicajesDeLead, useCubicajes } from '../../data/useCubicajes';
 import { Search } from '../../components/ui/Icons';
 
@@ -15,8 +16,10 @@ function normalizar(s) {
 }
 
 export default function Pipeline() {
-  const { leads, moveLead, resetDemo } = useLeads();
+  const { leads, moveLead } = useLeads();
   const { lista: cubicajes } = useCubicajes();
+  const [ficha, setFicha] = useState(null);
+  const cerrarFicha = useCallback(() => setFicha(null), []);
   const { t, lang } = useI18n();
   const proximo = useProximoLead();
   const [filtro, setFiltro] = useState('Todos');
@@ -115,6 +118,7 @@ export default function Pipeline() {
                     key={l.id}
                     lead={l}
                     cubicajes={cubicajesDeLead(cubicajes, l)}
+                    onOpen={() => setFicha(l.id)}
                     destacado={l.stage === 2 && proximo?.id === l.id}
                     onDragStart={setDragging}
                     onDragEnd={() => {
@@ -132,16 +136,11 @@ export default function Pipeline() {
 
       <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-muted">
         <span>{t('pipe.hint')}</span>
-        <button
-          type="button"
-          onClick={() => {
-            if (window.confirm(t('pipe.resetConfirm'))) resetDemo();
-          }}
-          className="min-h-11 cursor-pointer border-0 bg-transparent p-0 text-[13px] text-muted underline"
-        >
-          {t('pipe.reset')}
-        </button>
       </div>
+
+      {ficha && leads.some((l) => l.id === ficha) && (
+        <LeadDialog lead={leads.find((l) => l.id === ficha)} cubicajes={cubicajesDeLead(cubicajes, leads.find((l) => l.id === ficha))} onClose={cerrarFicha} />
+      )}
     </>
   );
 }

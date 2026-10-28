@@ -21,7 +21,7 @@ function meta(lead, t, lang) {
   return lead.valor ? money(lead.valor) : t('card.noValue');
 }
 
-export default function LeadCard({ lead, destacado, cubicajes = [], onDragStart, onDragEnd }) {
+export default function LeadCard({ lead, destacado, cubicajes = [], onOpen, onDragStart, onDragEnd }) {
   const { t, lang } = useI18n();
   const tipo = TIPOS[lead.answers.perfil] || TIPOS.empresario;
 
@@ -34,6 +34,16 @@ export default function LeadCard({ lead, destacado, cubicajes = [], onDragStart,
         onDragStart?.(lead.id);
       }}
       onDragEnd={onDragEnd}
+      // Doble clic (o Enter con el foco en la tarjeta) abre la ficha con los detalles
+      onDoubleClick={(e) => {
+        if (!e.target.closest('a, button')) onOpen?.();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && e.target === e.currentTarget) onOpen?.();
+      }}
+      tabIndex={0}
+      title={t('ficha.hint')}
+      aria-label={`${lead.nombre}. ${t('ficha.hint')}`}
       className={
         'flex cursor-grab flex-col gap-3 rounded-[18px_18px_18px_4px] border-[1.5px] bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(18,54,56,.10)] active:cursor-grabbing ' +
         (destacado ? 'border-gold' : 'border-transparent')

@@ -13,7 +13,8 @@ npm run build
 | Ruta | Qué es |
 | --- | --- |
 | `/` | Landing pública (escritorio y móvil) |
-| `/diagnostico` | Diagnóstico de 6 preguntas → resultado y agenda → confirmación |
+| `/diagnostico` | Diagnóstico: 6 preguntas + paso 7 opcional de cubicaje → resultado y agenda → confirmación |
+| `/cubicaje` | Calculadora pública de cubicaje (3D y PDF); el cubicaje se guarda y solo se ve en el panel |
 | `/admin/login` | Inicio de sesión de la cuenta administrativa |
 | `/admin` | Panel: tablero de prospectos (arrastrar tarjetas entre etapas) |
 | `/admin/prospectos/:id` | Brief previo a la llamada (+ vista previa de WhatsApp) |
@@ -24,9 +25,9 @@ Cuenta de demostración: **admin** / **captacion2026**.
 
 ## Datos
 
-Todo se guarda en `localStorage` del navegador (`src/data/LeadsContext.jsx`). Cada diagnóstico
-confirmado en la landing crea un prospecto en la columna «Llamada agendada» del panel.
-«Restaurar datos de ejemplo» (al pie del tablero) vuelve a los datos semilla de `src/data/seed.js`.
+Todo se guarda en `localStorage` del navegador (`src/data/LeadsContext.jsx`). El tablero de prospectos
+arranca vacío: solo muestra los prospectos que llegan por la landing, y todos entran en la columna «Nuevo».
+Los crea el diagnóstico confirmado o el cliente que descarga su cubicaje en `/cubicaje`.
 
 El login es solo de demostración (`src/lib/AuthContext.jsx`): la contraseña está en el código del
 frontend. Antes de publicar, cámbialo por autenticación real (por ejemplo, Supabase Auth) y mueve

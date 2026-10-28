@@ -20,12 +20,13 @@ const ACT_CODES = {
   'Cambió el horario de la llamada': 'reagendo',
 };
 
+// Los prospectos de ejemplo de versiones anteriores se descartan: el tablero solo muestra los que llegan por la landing
+const IDS_EJEMPLO = new Set(seedLeads().map((l) => l.id));
+
 function migrate(leads) {
-  const seed = Object.fromEntries(seedLeads().map((l) => [l.id, l]));
-  return leads.map((l) => ({
+  return leads.filter((l) => !IDS_EJEMPLO.has(l.id)).map((l) => ({
     ...l,
     lugar: l.lugar === 'Sin ciudad' ? '' : l.lugar,
-    en: l.en || seed[l.id]?.en,
     activity: (l.activity || []).map(({ t, ...a }) => (a.k ? a : { ...a, k: ACT_CODES[t] || 'diag' })),
   }));
 }
@@ -35,9 +36,9 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) return migrate(JSON.parse(raw));
   } catch {
-    // almacenamiento no disponible: se usan los datos de ejemplo
+    // almacenamiento no disponible: el tablero arranca vacío
   }
-  return seedLeads();
+  return [];
 }
 
 function slug(s) {
@@ -47,6 +48,12 @@ function slug(s) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+const digitos = (x) => (x || '').replace(/\D/g, '').slice(-10);
+
+export function nuevoLeadId(nombre) {
+  return slug(nombre) + '-' + Date.now().toString(36);
 }
 
 export function LeadsProvider({ children }) {
@@ -85,12 +92,13 @@ export function LeadsProvider({ children }) {
   }, []);
 
   // Diagnóstico completado y llamada agendada desde la landing
-  const addLead = useCallback(({ nombre, whatsapp, answers, cita }) => {
+  const addLead = useCallback(({ nombre, whatsapp, answers, cita, conCubicaje = false }) => {
     const now = new Date();
     const tipo = TIPOS[answers.perfil] || TIPOS.empresario;
     const lead = {
       id: slug(nombre) + '-' + now.getTime().toString(36),
-      stage: 2,
+      // Todo prospecto que llega por la landing arranca en «Nuevo»
+      stage: 0,
       nombre: nombre.trim(),
       tipoLabel: tipo.label,
       lugar: '',
@@ -111,6 +119,7 @@ export function LeadsProvider({ children }) {
       activity: [
         { k: 'diag', at: now.toISOString() },
         { k: 'agendo', at: now.toISOString() },
+        ...(conCubicaje ? [{ k: 'cubicaje', at: now.toISOString() }] : []),
         { k: 'recordatorio', at: new Date(cita.getTime() - 24 * 3600 * 1000).toISOString(), pending: true },
       ],
     };
@@ -118,22 +127,27 @@ export function LeadsProvider({ children }) {
     return lead;
   }, []);
 
-  // Cliente que genera un cubicaje desde la landing. Reutiliza el prospecto si ya existe
-  // (llegó desde el diagnóstico o su WhatsApp coincide); si no, crea uno nuevo en la columna «Nuevo».
+  // Prospecto existente para un cubicaje de la landing: el que llegó del diagnóstico o el que tiene el mismo WhatsApp
+  const resolverLead = useCallback(
+    ({ leadId, whatsapp }) => {
+      const d = digitos(whatsapp);
+      const l = leads.find((x) => x.id === leadId) || (d.length >= 7 && leads.find((x) => digitos(x.whatsapp) === d));
+      return l ? l.id : null;
+    },
+    [leads],
+  );
+
+  // Registra que el prospecto generó un cubicaje; si no existe, lo crea en «Nuevo» con ese id
   const registrarCubicaje = useCallback(
     ({ leadId, nombre, whatsapp, correo }) => {
       const now = new Date().toISOString();
-      const digitos = (x) => (x || '').replace(/\D/g, '').slice(-10);
-      const existente = leads.find((l) => l.id === leadId) || (digitos(whatsapp).length >= 7 && leads.find((l) => digitos(l.whatsapp) === digitos(whatsapp)));
-      if (existente) {
-        setLeads((ls) =>
-          ls.map((l) => (l.id === existente.id ? { ...l, correo: l.correo || correo || '', activity: [...(l.activity || []), { k: 'cubicaje', at: now }] } : l)),
-        );
-        return existente.id;
+      if (leads.some((l) => l.id === leadId)) {
+        setLeads((ls) => ls.map((l) => (l.id === leadId ? { ...l, correo: l.correo || correo || '', activity: [...(l.activity || []), { k: 'cubicaje', at: now }] } : l)));
+        return leadId;
       }
       const answers = { area: 'comex' };
       const lead = {
-        id: slug(nombre) + '-' + Date.now().toString(36),
+        id: leadId || nuevoLeadId(nombre),
         stage: 0,
         nombre: nombre.trim(),
         tipoLabel: '',
@@ -160,11 +174,9 @@ export function LeadsProvider({ children }) {
     [leads],
   );
 
-  const resetDemo = useCallback(() => setLeads(seedLeads()), []);
-
   const value = useMemo(
-    () => ({ leads, updateLead, moveLead, addLead, registrarCubicaje, resetDemo }),
-    [leads, updateLead, moveLead, addLead, registrarCubicaje, resetDemo],
+    () => ({ leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje }),
+    [leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje],
   );
   return <LeadsContext.Provider value={value}>{children}</LeadsContext.Provider>;
 }

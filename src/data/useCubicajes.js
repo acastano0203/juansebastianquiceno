@@ -41,10 +41,7 @@ export function useCubicaje(id) {
   return estado;
 }
 
-const digitos = (x) => (x || '').replace(/\D/g, '').slice(-10);
-
-// Cubicajes de un prospecto: por id o, si el cliente lo generó en otro navegador, por su WhatsApp
+// Cubicajes que hizo un prospecto: solo los vinculados explícitamente a él
 export function cubicajesDeLead(lista, lead) {
-  const wa = digitos(lead.whatsapp);
-  return lista.filter((c) => c.prospectoId === lead.id || (wa.length >= 7 && digitos(c.contacto?.whatsapp) === wa));
+  return lista.filter((c) => c.prospectoId === lead.id);
 }
