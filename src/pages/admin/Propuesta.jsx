@@ -186,7 +186,7 @@ export default function Propuesta() {
         <article className="print-only-root min-w-0 flex-[999_1_560px] overflow-hidden rounded-[32px_32px_32px_4px] bg-white shadow-[0_16px_40px_rgba(18,54,56,.08)]">
           <header className="relative flex flex-col gap-[18px] rounded-br-[110px] bg-ink px-6 pt-9 pb-11 text-white md:px-11">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <span className="text-xs font-semibold tracking-[0.2em]">JUAN SEBASTIÁN QUICENO</span>
+              <span className="text-xs font-semibold tracking-[0.2em]">ACCESO INTERNACIONAL</span>
               <span className="text-xs text-sage">
                 PRO-{hoy.getFullYear()}-{lead.id.slice(0, 4).toUpperCase()} · {hoy.getDate()} de {monthName(hoy.getMonth())} de {hoy.getFullYear()}
               </span>

@@ -1,41 +1,71 @@
+import { useMemo } from 'react';
 import { useI18n } from '../../i18n/LanguageContext';
-import { getQuestions } from '../../data/catalog';
+import { casoCafe } from '../../config/casoCafe';
+import { PARAMS } from '../../config/params';
+import { calcularSimulacion } from '../../engine/simulacion';
+import { formatoDinero, formatoNumero, formatoPct } from '../../engine/unidades';
+import BotonWhatsApp from '../simulador/BotonWhatsApp';
+import { enlaceWhatsApp } from '../../lib/contacto';
 import RootLines from '../ui/RootLines';
 import { ButtonLink } from '../ui/Button';
-import { ArrowRight, Check } from '../ui/Icons';
+import { Alert, ArrowRight, Board, Chart, Doc } from '../ui/Icons';
 import SiteHeader from './SiteHeader';
 
-function PreviewCard() {
+// La tarjeta del ejemplo sale del motor, con una fecha fija: nunca puede contradecir el cálculo real
+function TarjetaEjemplo() {
   const { t, lang } = useI18n();
-  const [first, ...rest] = getQuestions(lang)[0].opts;
+  const r = useMemo(() => calcularSimulacion(casoCafe(), PARAMS, '2026-11-09'), []);
+  const ev = r.equipos.find((e) => e.equipoId === r.seleccion.equipoId);
+  const equipo = PARAMS.equipos.find((e) => e.id === r.seleccion.equipoId);
+  const filas = [
+    [t('hero.cardEquipo'), `FCL ${equipo.nombre[lang]} · ${formatoNumero(r.cubicaje.totalPallets, 0, lang)} pallets`],
+    [t('hero.cardOcupacion'), formatoPct(ev.ocupacionVolumen, lang)],
+    ['Incoterm', 'CIF Miami'],
+    [t('sim.cos.totalParcial'), formatoDinero(r.rentabilidad.total, 'USD', lang)],
+  ];
   return (
     <div className="relative hidden justify-center lg:flex" aria-hidden="true">
       <div className="absolute -top-7 -right-2.5 size-[300px] rounded-[0_160px_0_160px] bg-ink-2" />
-      <div className="relative flex w-full max-w-[440px] flex-col gap-5 rounded-[32px_32px_32px_6px] bg-white p-8 shadow-[0_30px_60px_rgba(4,20,21,.35)]">
+      <div className="relative flex w-full max-w-[420px] flex-col gap-4 rounded-[32px_32px_32px_6px] bg-white p-7 shadow-[0_30px_60px_rgba(4,20,21,.35)]">
         <div className="flex items-center justify-between text-[13px] text-muted">
           <span className="font-semibold text-ink">{t('hero.cardTitle')}</span>
           <span>{t('hero.cardStep')}</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-line-2">
-          <div className="h-full w-[17%] rounded-full bg-gold" />
-        </div>
-        <div className="font-serif text-[28px] leading-[1.15] font-semibold">{t('hero.cardQ')}</div>
-        <div className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between rounded-2xl bg-ink px-[18px] py-3.5 text-white">
-            <span className="flex flex-col gap-0.5">
-              <span className="text-[15px] font-semibold">{first.t}</span>
-              <span className="text-[13px] text-sage">{t('hero.cardOptDesc')}</span>
-            </span>
-            <Check size={22} strokeWidth={2.4} className="text-gold" />
-          </div>
-          {rest.map((o) => (
-            <div key={o.id} className="rounded-2xl border border-line px-[18px] py-3.5 text-[15px] font-medium">
-              {o.t}
-            </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <span key={i} className={'h-1.5 flex-1 rounded-full ' + (i < 5 ? 'bg-gold' : 'bg-line-2')} />
           ))}
         </div>
+        <div className="font-serif text-[26px] leading-[1.15] font-semibold">{t('hero.cardRuta')}</div>
+        <dl className="m-0 flex flex-col">
+          {filas.map(([k, v]) => (
+            <div key={k} className="flex items-baseline justify-between gap-3 border-t border-line py-2.5 text-sm">
+              <dt className="text-muted">{k}</dt>
+              <dd className="m-0 text-right font-semibold">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <span className="text-[13px] text-muted italic">{t('hero.cardNota')}</span>
       </div>
     </div>
+  );
+}
+
+function Beneficios() {
+  const { t } = useI18n();
+  const iconos = [Chart, Board, Alert, Doc];
+  return (
+    <ul className="m-0 grid list-none gap-3 p-0 pb-14 sm:grid-cols-2 md:pb-20 lg:grid-cols-4">
+      {t('hero.beneficios').map((b, i) => {
+        const Icono = iconos[i];
+        return (
+          <li key={b} className="flex flex-col gap-3 rounded-[20px] bg-white p-5 text-ink">
+            <Icono size={22} className="text-clay" />
+            <span className="text-[15px] leading-[1.3] font-semibold">{b}</span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -49,28 +79,33 @@ export default function Hero() {
       <div className="relative mx-auto max-w-[1240px] px-[22px] md:px-10">
         <SiteHeader />
 
-        <div className="grid items-center gap-[72px] pt-6 pb-[72px] md:pt-16 md:pb-[140px] lg:grid-cols-2">
-          <div className="flex flex-col gap-[22px] md:gap-7">
-            <span className="text-[11px] font-medium tracking-[0.12em] text-sage uppercase md:text-[13px] md:tracking-[0.14em]">{t('hero.eyebrow')}</span>
-            <h1 className="m-0 font-serif text-[42px] leading-[1.06] font-semibold tracking-[-0.015em] text-balance text-white md:text-[70px] md:leading-[1.04] md:tracking-[-0.02em]">
+        <div className="grid items-center gap-[56px] pt-6 pb-12 md:pt-12 md:pb-16 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <div className="flex min-w-0 flex-col gap-[22px] md:gap-7">
+            <span className="text-[11px] font-medium tracking-[0.12em] text-gold uppercase md:text-[13px] md:tracking-[0.14em]">{t('hero.eyebrow')}</span>
+            <h1 className="m-0 font-serif text-[38px] leading-[1.06] font-semibold tracking-[-0.015em] text-balance text-white md:text-[60px] md:leading-[1.04] md:tracking-[-0.02em]">
               {t('hero.title1')}
               <em className="font-normal text-gold italic">{t('hero.titleEm')}</em>
               {t('hero.title2')}
             </h1>
-            <p className="m-0 max-w-[520px] text-base leading-[1.55] text-pale md:text-[19px]">
-              {t('hero.lead')}
-              <span className="hidden md:inline">{t('hero.leadMore')}</span>.
-            </p>
-            <div className="mt-2 flex flex-col items-stretch gap-5 md:flex-row md:flex-wrap md:items-center">
-              <ButtonLink to="/diagnostico" variant="gold" size="hero" lift className="min-h-14 md:min-h-[60px]">
-                {t('nav.cta')}
+            <p className="m-0 max-w-[600px] text-base leading-[1.55] text-pale md:text-[19px]">{t('hero.lead')}</p>
+            <div className="mt-1 flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
+              <ButtonLink to="/simulador" variant="gold" size="lg" lift>
+                {t('hero.ctaSimular')}
                 <ArrowRight />
               </ButtonLink>
-              <span className="text-center text-[13px] text-sage md:text-left md:text-sm">{t('hero.meta')}</span>
+              <ButtonLink to="/simulador?etapa=cubicaje" variant="outline-white" size="lg">
+                {t('hero.ctaCubicar')}
+              </ButtonLink>
+              <BotonWhatsApp variant="outline-white" mensaje={t('sim.res.msgAsesor')}>
+                {t('hero.ctaAsesor')}
+              </BotonWhatsApp>
             </div>
+            {!enlaceWhatsApp('x') && <span className="text-[13px] text-sage">{t('sim.res.asesorInactivo')}</span>}
           </div>
-          <PreviewCard />
+          <TarjetaEjemplo />
         </div>
+
+        <Beneficios />
       </div>
     </section>
   );

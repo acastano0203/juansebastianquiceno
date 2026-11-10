@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useProximoLead } from './data/LeadsContext';
 import Landing from './pages/public/Landing';
-import Diagnostico from './pages/public/Diagnostico';
+import Simulador from './pages/public/Simulador';
 import CubicajePublico from './pages/public/Cubicaje';
 import Login from './pages/admin/Login';
 import AdminLayout from './components/admin/AdminLayout';
@@ -24,7 +24,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/diagnostico" element={<Diagnostico />} />
+      <Route path="/simulador" element={<Simulador />} />
+      <Route path="/diagnostico" element={<Navigate to="/simulador" replace />} />
       <Route path="/cubicaje" element={<CubicajePublico />} />
       <Route path="/admin/login" element={<Login />} />
       <Route path="/admin" element={<AdminLayout />}>

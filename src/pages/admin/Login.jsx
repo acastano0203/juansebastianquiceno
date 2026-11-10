@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { DEMO_USER, useAuth } from '../../lib/AuthContext';
 import { useI18n } from '../../i18n/LanguageContext';
-import { AsideShell } from '../../components/diagnostico/StepsAside';
+import AsideShell from '../../components/ui/AsideShell';
 import { Button } from '../../components/ui/Button';
 import { ArrowRight, Lock } from '../../components/ui/Icons';
 

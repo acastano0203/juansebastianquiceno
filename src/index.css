@@ -71,8 +71,15 @@
 }
 
 @media print {
+  @page {
+    margin: 12mm;
+  }
   .no-print {
     display: none !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .print-only-root {
     box-shadow: none !important;

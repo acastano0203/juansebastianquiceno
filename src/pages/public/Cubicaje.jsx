@@ -105,7 +105,7 @@ function VistaImpresion({ cubicaje, contacto, imagen }) {
   return (
     <div className="hidden flex-col gap-5 p-2 text-ink print:flex">
       <div className="flex items-baseline justify-between border-b border-line pb-3">
-        <span className="text-xs font-semibold tracking-[0.2em]">JUAN SEBASTIÁN QUICENO</span>
+        <span className="text-xs font-semibold tracking-[0.2em]">ACCESO INTERNACIONAL</span>
         <span className="text-xs text-muted">{t('brand.sub')}</span>
       </div>
       <div className="flex flex-col gap-1">
@@ -226,7 +226,7 @@ export default function CubicajePublico() {
                 <strong className="text-[17px] font-semibold">{t('cub.pub.guardadoT')}</strong>
                 <span className="text-sm leading-normal">{t('cub.pub.guardadoD')}</span>
               </div>
-              <ButtonLink to="/diagnostico" variant="ink" size="md">
+              <ButtonLink to="/simulador" variant="ink" size="md">
                 {t('cub.pub.agendar')}
                 <ArrowRight />
               </ButtonLink>
@@ -255,7 +255,7 @@ export default function CubicajePublico() {
           />
 
           <p className="m-0 text-sm text-muted">
-            <Link to="/diagnostico">{t('cub.pub.agendar')}</Link>
+            <Link to="/simulador">{t('cub.pub.agendar')}</Link>
           </p>
         </main>
         <SiteFooter />

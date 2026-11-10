@@ -6,6 +6,7 @@ const VARIANTS = {
   outline: 'border-[1.5px] border-line bg-white text-ink',
   'outline-ink': 'border-[1.5px] border-ink bg-transparent text-ink',
   'outline-gold': 'border border-gold bg-transparent text-gold',
+  'outline-white': 'border border-pale bg-transparent text-white',
   white: 'bg-white text-ink border-0',
 };
 
@@ -17,7 +18,7 @@ const SIZES = {
   hero: 'min-h-[60px] px-8 text-[17px] font-semibold gap-3',
 };
 
-function classes({ variant = 'gold', size = 'md', lift, className = '' }) {
+export function classes({ variant = 'gold', size = 'md', lift, className = '' }) {
   return [
     'inline-flex items-center justify-center rounded-full no-underline transition-opacity cursor-pointer disabled:cursor-not-allowed disabled:opacity-45',
     VARIANTS[variant],

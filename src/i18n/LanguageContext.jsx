@@ -32,7 +32,7 @@ export function LanguageProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === 'en' ? 'Juan Sebastián Quiceno · Strategy consulting' : 'Juan Sebastián Quiceno · Consultoría estratégica';
+    document.title = lang === 'en' ? 'Acceso Internacional · Smart Costs and Load Planning' : 'Acceso Internacional · Costos y Cubicaje Inteligente';
   }, [lang]);
 
   // t('seccion.clave', { var }) — devuelve el texto (o arreglo/objeto) con las variables reemplazadas
