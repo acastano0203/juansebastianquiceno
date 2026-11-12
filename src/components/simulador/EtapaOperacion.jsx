@@ -84,7 +84,8 @@ export default function EtapaOperacion({ s }) {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="grid grid-cols-[110px_1fr] gap-3">
+        {/* Ancho suficiente para que "Moneda de negociación" quede en una línea y el selector se alinee con el valor */}
+        <div className="grid grid-cols-[170px_1fr] gap-3">
           <Campo label={t('sim.op.moneda')}>
             <Opciones valor={op.moneda} vacio={t('sim.elegir')} opciones={MONEDAS.map((id) => ({ id, label: id }))} onCambio={(moneda) => cambiar({ moneda })} />
           </Campo>
