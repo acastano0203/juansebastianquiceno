@@ -93,7 +93,7 @@ export default function Hero() {
                 {t('hero.ctaSimular')}
                 <ArrowRight />
               </ButtonLink>
-              <ButtonLink to="/simulador?etapa=cubicaje" variant="outline-white" size="lg">
+              <ButtonLink to="/cubicaje" variant="outline-white" size="lg">
                 {t('hero.ctaCubicar')}
               </ButtonLink>
               <BotonWhatsApp variant="outline-white" mensaje={t('sim.res.msgAsesor')}>

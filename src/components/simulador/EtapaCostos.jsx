@@ -178,7 +178,7 @@ function FilaRubro({ l, s }) {
 
 export default function EtapaCostos({ s }) {
   const { t, lang } = useI18n();
-  const { sim, vivo, actualizar, calcular, faltantes, historial, estado } = s;
+  const { sim, vivo, actualizar, calcular, faltantes, historial, estado, irA } = s;
   const [modulo, setModulo] = useState('A');
   const [nombreOtro, setNombreOtro] = useState('');
   const moneda = sim.operacion.moneda;
@@ -206,6 +206,36 @@ export default function EtapaCostos({ s }) {
     actualizar((sm) => ({ ...sm, otros: [...sm.otros, { id: nuevoId(), modulo, nombre: nombreOtro.trim(), valor: null }] }));
     setNombreOtro('');
   };
+
+  // Sin ruta, Incoterm, moneda o productos los rubros no tienen sentido (salen sin moneda, "lo paga la otra parte"
+  // o con el valor de la mercancía imposible de llenar aquí). Se pide completar primero lo que falta.
+  const faltaBase = faltantes.filter((f) => f !== 'REFERENCIA' && f !== 'COSTOS_ORIGEN');
+  if (faltaBase.length) {
+    const faltaOperacion = faltaBase.some((f) => f !== 'PRODUCTO');
+    return (
+      <div className="flex flex-col gap-4">
+        <h1 className="m-0 font-serif text-[28px] leading-tight font-semibold md:text-[34px]">{t('sim.cos.titulo')}</h1>
+        <Tarjeta className="flex flex-col items-start gap-3">
+          <h2 className="m-0 font-serif text-[22px] leading-tight font-semibold">{t('sim.cos.sinBaseT')}</h2>
+          <p className="m-0 max-w-[640px] text-sm leading-normal text-muted">{t('sim.cos.sinBaseD', { f: faltaBase.map((f) => t('sim.faltante.' + f)).join(', ') })}</p>
+          <div className="flex flex-wrap gap-2.5">
+            {faltaOperacion && (
+              <Button variant="ink" onClick={() => irA('operacion')}>
+                {t('sim.cos.irOperacion')}
+                <ArrowRight size={16} />
+              </Button>
+            )}
+            {faltaBase.includes('PRODUCTO') && (
+              <Button variant={faltaOperacion ? 'outline' : 'ink'} onClick={() => irA('producto')}>
+                {t('sim.cos.irProducto')}
+                <ArrowRight size={16} />
+              </Button>
+            )}
+          </div>
+        </Tarjeta>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

@@ -31,7 +31,8 @@ export default function ResultadoCubicaje({ s }) {
   const { t, lang } = useI18n();
   const { sim, vivo, actualizar, actualizarOperacion, irA } = s;
   const [vistaPrevia, setVistaPrevia] = useState(null);
-  const modalidad = sim.operacion.modalidad;
+  // Sin modalidad elegida (p. ej. entró directo a Cubicaje) se comparan todas las opciones, como en POR_EVALUAR
+  const modalidad = sim.operacion.modalidad || 'POR_EVALUAR';
   const porEvaluar = modalidad === 'POR_EVALUAR';
   const campos = camposPorModalidad(modalidad);
   const c = vivo.cubicaje;
@@ -55,11 +56,11 @@ export default function ResultadoCubicaje({ s }) {
   const ev = equipo ? vivo.equipos.find((x) => x.equipoId === equipo.id) : null;
   const bloques = useMemo(() => (equipo ? distribuirCarga(equipo, sim.referencias, c) : []), [equipo, sim.referencias, c]);
 
-  if (!c.referencias.length) {
+  if (!c.referencias.length || !tab) {
     return (
       <Tarjeta className="flex flex-col items-start gap-3">
         <h1 className="m-0 font-serif text-[28px] font-semibold">{t('sim.cub.resultado')}</h1>
-        <p className="m-0 text-sm text-muted">{t('sim.cub.sinCarga')}</p>
+        <p className="m-0 text-sm text-muted">{sim.referencias.length ? t('sim.cub.incompletos') : t('sim.cub.sinCarga')}</p>
         <Button variant="ink" onClick={() => irA('cubicaje')}>{t('sim.cub.volverReferencias')}</Button>
       </Tarjeta>
     );

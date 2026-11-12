@@ -6,10 +6,13 @@ import { Button } from '../ui/Button';
 import { ArrowRight, Plus, Trash } from '../ui/Icons';
 import { Aviso, Campo, Dato, Interruptor, Numero, Opciones, Tarjeta, Texto } from './Campos';
 import { EMPAQUES } from './EtapaProducto';
-import { nuevaReferencia } from './useSimulacion';
+import { nuevaReferencia, nuevoProducto } from './useSimulacion';
 
 const UNIDADES = ['cm', 'm', 'in'];
 const ROTACIONES = ['SOLO_BASE', 'LIBRE', 'FIJA'];
+// Productos creados desde aquí (el usuario solo escribió el nombre): no cuentan como declarados en la Etapa 2
+const declarados = (productos) => productos.filter((p) => !p.desdeCubicaje);
+
 // Si el empaque ya es un pallet o una estiba, no tiene sentido preguntar si va sobre pallets
 const YA_PALETIZADO = ['PALLET', 'ESTIBA'];
 
@@ -38,6 +41,16 @@ function Bloque({ n, titulo, ayuda, children }) {
   );
 }
 
+// Lo mínimo que el cálculo necesita de un empaque (el motor ignora los que no lo tienen)
+export function faltantesReferencia(r) {
+  const f = [];
+  if (!(r.bultos >= 1)) f.push('bultos');
+  if (!r.unidadMedida) f.push('unidad');
+  if (!(r.largoMm > 0 && r.anchoMm > 0 && r.altoMm > 0)) f.push('medidas');
+  if (!(r.pesoBrutoG > 0)) f.push('peso');
+  return f;
+}
+
 function Referencia({ r, s, calc, indice }) {
   const { t, lang } = useI18n();
   const nombreEmpaque = useNombreEmpaque();
@@ -57,6 +70,21 @@ function Referencia({ r, s, calc, indice }) {
   const cmPallet = (mm) => (mm ? mm / 10 : null);
   const apilable = r.apilable && !r.manejo.fragil;
   const yaPaletizado = YA_PALETIZADO.includes(r.empaque);
+  // Se marcan los campos que faltan solo después de que el usuario intentó seguir
+  const faltan = s.revisarCub ? faltantesReferencia(r) : [];
+  const obligatorio = t('sim.cub.obligatorio');
+
+  // Si no hay productos declarados en la Etapa 2 (p. ej. entró directo a Cubicaje), el usuario solo escribe
+  // qué producto es y por debajo se crea uno propio de esta referencia; no tiene que saber que existe la Etapa 2.
+  const escribirProducto = declarados(sim.productos).length === 0;
+  const productoPropio = sim.productos.find((p) => p.id === r.productoId && p.desdeCubicaje);
+  const nombrarProducto = (nombre) =>
+    actualizar((sm) => {
+      const propio = sm.productos.find((p) => p.id === r.productoId && p.desdeCubicaje);
+      if (propio) return { ...sm, productos: sm.productos.map((p) => (p.id === propio.id ? { ...p, nombre } : p)) };
+      const prod = { ...nuevoProducto(sm.productos.length + 1, nombre), empaque: r.empaque || '', desdeCubicaje: true };
+      return { ...sm, productos: [...sm.productos, prod], referencias: sm.referencias.map((x) => (x.id === r.id ? { ...x, productoId: prod.id } : x)) };
+    });
 
   // Al elegir el producto se propone el empaque que se declaró en la Etapa 2, si aún no hay uno
   const elegirProducto = (productoId) => {
@@ -73,26 +101,45 @@ function Referencia({ r, s, calc, indice }) {
             <span className="font-sans text-[15px] font-normal text-muted"> · {sim.productos.find((p) => p.id === r.productoId).nombre}</span>
           )}
         </h2>
-        <Button variant="outline" size="sm" onClick={() => actualizar((sm) => ({ ...sm, referencias: sm.referencias.filter((x) => x.id !== r.id) }))}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            actualizar((sm) => ({
+              ...sm,
+              referencias: sm.referencias.filter((x) => x.id !== r.id),
+              // El producto que se creó solo para esta referencia se va con ella
+              productos: sm.productos.filter((p) => !(p.desdeCubicaje && p.id === r.productoId)),
+            }))
+          }
+        >
           <Trash size={14} />
           {t('sim.cub.eliminar')}
         </Button>
       </div>
 
+      {faltan.length > 0 && (
+        <Aviso tono="arcilla">{t('sim.cub.falta', { f: faltan.map((k) => t('sim.cub.faltaCampo.' + k, { e: e.varios })).join(', ') })}</Aviso>
+      )}
+
       <Bloque n={1} titulo={t('sim.cub.b1')}>
         <div className="grid gap-3 sm:grid-cols-3">
           <Campo label={t('sim.cub.producto')}>
-            <Opciones
-              valor={r.productoId}
-              vacio={t('sim.cub.elegirProducto')}
-              opciones={sim.productos.map((p, i) => ({ id: p.id, label: p.nombre || t('sim.prod.nombreDefecto', { n: i + 1 }) }))}
-              onCambio={elegirProducto}
-            />
+            {escribirProducto ? (
+              <Texto valor={productoPropio?.nombre ?? ''} maxLength={120} placeholder={t('sim.cub.productoPh')} onCambio={nombrarProducto} />
+            ) : (
+              <Opciones
+                valor={r.productoId}
+                vacio={t('sim.cub.elegirProducto')}
+                opciones={sim.productos.map((p, i) => ({ id: p.id, label: p.nombre || t('sim.prod.nombreDefecto', { n: i + 1 }) }))}
+                onCambio={elegirProducto}
+              />
+            )}
           </Campo>
           <Campo label={t('sim.cub.empaque')}>
             <Opciones valor={r.empaque ?? ''} vacio={t('sim.elegir')} opciones={EMPAQUES.map((id) => ({ id, label: t('sim.empaque.' + id) }))} onCambio={(empaque) => cambiar({ empaque, ...(YA_PALETIZADO.includes(empaque) ? { paletizar: false } : {}) })} />
           </Campo>
-          <Campo label={t('sim.cub.cantidad', { e: e.varios })}>
+          <Campo label={t('sim.cub.cantidad', { e: e.varios })} error={faltan.includes('bultos') ? obligatorio : null}>
             <Numero valor={r.bultos || null} placeholder={t('sim.cub.cantidadPh')} onCambio={(v) => cambiar({ bultos: v == null ? 0 : Math.max(0, Math.floor(v)) })} />
           </Campo>
         </div>
@@ -100,11 +147,11 @@ function Referencia({ r, s, calc, indice }) {
 
       <Bloque n={2} titulo={t('sim.cub.b2', { e: e.uno })} ayuda={t('sim.cub.b2Ayuda', { e: e.uno })}>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <Campo label={t('sim.cub.unidadMedida')}>
+          <Campo label={t('sim.cub.unidadMedida')} error={faltan.includes('unidad') ? obligatorio : null}>
             <Opciones valor={u} vacio={t('sim.elegir')} opciones={UNIDADES.map((id) => ({ id, label: t('sim.cub.unidadNombre.' + id) }))} onCambio={(unidadMedida) => cambiar({ unidadMedida })} />
           </Campo>
           {['largo', 'ancho', 'alto'].map((d) => (
-            <Campo key={d} label={`${t('sim.cub.' + d)}${etiquetaU}`}>
+            <Campo key={d} label={`${t('sim.cub.' + d)}${etiquetaU}`} error={faltan.includes('medidas') && !(r[d + 'Mm'] > 0) ? obligatorio : null}>
               <Numero
                 valor={medida(r[d + 'Mm'])}
                 disabled={sinUnidad}
@@ -123,7 +170,7 @@ function Referencia({ r, s, calc, indice }) {
 
       <Bloque n={3} titulo={t('sim.cub.b3', { e: e.uno })}>
         <div className="grid gap-3 sm:grid-cols-3">
-          <Campo label={t('sim.cub.pesoBruto')} ayuda={t('sim.cub.pesoBrutoAyuda')} error={pesoMal ? t('sim.cub.pesoError') : null}>
+          <Campo label={t('sim.cub.pesoBruto')} ayuda={t('sim.cub.pesoBrutoAyuda')} error={pesoMal ? t('sim.cub.pesoError') : faltan.includes('peso') ? obligatorio : null}>
             <Numero valor={r.pesoBrutoG ? r.pesoBrutoG / 1000 : null} onCambio={(v) => cambiar({ pesoBrutoG: v == null ? 0 : kgAG(v) })} />
           </Campo>
           <Campo label={t('sim.cub.pesoNeto')} ayuda={t('sim.cub.opcional')}>
@@ -210,14 +257,15 @@ function Referencia({ r, s, calc, indice }) {
 
 export default function EtapaCubicaje({ s }) {
   const { t, lang } = useI18n();
-  const { sim, actualizar, vivo, setCubVista } = s;
+  const { sim, actualizar, vivo, verResultadoCub } = s;
   const c = vivo.cubicaje;
   const hayCarga = c.referencias.length > 0;
   const equipo = vivo.seleccion ? PARAMS.equipos.find((e) => e.id === vivo.seleccion.equipoId) : null;
 
   const anadir = () =>
     actualizar((sm) => {
-      const prod = sm.productos.length === 1 ? sm.productos[0] : null;
+      const decl = declarados(sm.productos);
+      const prod = decl.length === 1 ? decl[0] : null;
       return { ...sm, referencias: [...sm.referencias, nuevaReferencia(prod?.id ?? '', t('sim.cub.nombreDefecto', { n: sm.referencias.length + 1 }), prod?.empaque ?? '')] };
     });
 
@@ -231,7 +279,9 @@ export default function EtapaCubicaje({ s }) {
       <Aviso tono="menta" titulo={t('sim.cub.ejemploT')}>{t('sim.cub.ejemplo')}</Aviso>
 
       {sim.referencias.map((r, i) => (
-        <Referencia key={r.id} r={r} s={s} indice={i} calc={vivo.cubicaje.referencias.find((x) => x.referenciaId === r.id)} />
+        <div key={r.id} id={'empaque-' + r.id} className="scroll-mt-4">
+          <Referencia r={r} s={s} indice={i} calc={vivo.cubicaje.referencias.find((x) => x.referenciaId === r.id)} />
+        </div>
       ))}
 
       <button
@@ -264,7 +314,7 @@ export default function EtapaCubicaje({ s }) {
                 </>
               )}
             </span>
-            <Button variant="gold" onClick={() => setCubVista('resultado')}>
+            <Button variant="gold" onClick={verResultadoCub}>
               {t('sim.cub.verResultado')}
               <ArrowRight size={16} />
             </Button>

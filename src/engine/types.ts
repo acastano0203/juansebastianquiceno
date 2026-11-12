@@ -91,6 +91,8 @@ export interface Producto {
   empaque: string;
   requisitos: string[];
   certificaciones: string;
+  /** Creado desde Cubicaje cuando el usuario solo escribió el nombre (sin pasar por la Etapa 2). */
+  desdeCubicaje?: boolean;
 }
 
 export interface PalletConfig {

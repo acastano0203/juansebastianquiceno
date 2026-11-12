@@ -17,6 +17,9 @@ export default function SiteHeader() {
         <Link to="/simulador" className="text-pale no-underline hover:text-white">
           {t('nav.simulador')}
         </Link>
+        <Link to="/cubicaje" className="text-pale no-underline hover:text-white">
+          {t('hero.ctaCubicar')}
+        </Link>
         <LanguageSwitcher />
         <ButtonLink to="/simulador" variant="outline-gold" size="md" lift className="px-[22px]">
           {t('nav.cta')}
@@ -36,7 +39,7 @@ export default function SiteHeader() {
       </div>
       {open && (
         <nav aria-label={t('nav.main')} className="flex w-full flex-col gap-1 rounded-[20px_20px_20px_4px] bg-ink-2 p-3 md:hidden">
-          <Link to="/simulador?etapa=cubicaje" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
+          <Link to="/cubicaje" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
             {t('hero.ctaCubicar')}
           </Link>
           <ButtonLink to="/simulador" variant="gold" size="md" className="mt-1">

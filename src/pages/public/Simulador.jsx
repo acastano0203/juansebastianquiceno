@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
 import { ETAPAS, etapasCompletas } from '../../engine/simulacion';
@@ -7,7 +7,7 @@ import { ArrowRight, ChevronLeft } from '../../components/ui/Icons';
 import ProgresoEtapas from '../../components/simulador/ProgresoEtapas';
 import EtapaOperacion from '../../components/simulador/EtapaOperacion';
 import EtapaProducto from '../../components/simulador/EtapaProducto';
-import EtapaCubicaje from '../../components/simulador/EtapaCubicaje';
+import EtapaCubicaje, { faltantesReferencia } from '../../components/simulador/EtapaCubicaje';
 import ResultadoCubicaje from '../../components/simulador/ResultadoCubicaje';
 import EtapaCostos from '../../components/simulador/EtapaCostos';
 import EtapaResultado from '../../components/simulador/EtapaResultado';
@@ -35,9 +35,17 @@ export default function Simulador() {
 
   // Desde Costos solo se avanza calculando, y calcular exige los mínimos y los costos de origen cubiertos
   const bloqueado = etapa === 'costos' && s.faltantes.length > 0;
+  // En Cubicaje, si algún empaque está incompleto no se pasa al resultado: se marcan los campos que faltan
+  const [revisarCub, setRevisarCub] = useState(false);
+  const verResultadoCub = () => {
+    const incompleto = sim.referencias.find((r) => faltantesReferencia(r).length > 0);
+    if (!incompleto) return setCubVista('resultado');
+    setRevisarCub(true);
+    setTimeout(() => document.getElementById('empaque-' + incompleto.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  };
   const siguiente = () => {
     if (etapa === 'costos') s.calcular();
-    else if (etapa === 'cubicaje' && !enResultadoCub) setCubVista('resultado');
+    else if (etapa === 'cubicaje' && !enResultadoCub) verResultadoCub();
     else irA(ETAPAS[indice + 1]);
   };
   const anterior = () => {
@@ -68,20 +76,22 @@ export default function Simulador() {
               >
                 {t('sim.reiniciar')}
               </button>
-              <Link to="/" className="inline-flex min-h-9 items-center text-muted">
+              {/* Salir borra la simulación del navegador: la próxima vez empieza desde cero */}
+              <Link to="/" onClick={s.terminar} className="inline-flex min-h-9 items-center text-muted">
                 {t('sim.guardarSalir')}
               </Link>
             </span>
           </div>
           <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={ETAPAS.length} aria-valuenow={indice + 1} aria-label={t('sim.progreso')}>
             {ETAPAS.map((e, i) => (
-              <span key={e} className={'h-1.5 flex-1 rounded-full ' + (i <= indice ? 'bg-gold' : 'bg-line')} />
+              // Dorado = etapa completa; oscuro = la actual; claro = pendiente (aunque ya se haya pasado por ella)
+              <span key={e} className={'h-1.5 flex-1 rounded-full ' + (completas[e] ? 'bg-gold' : i === indice ? 'bg-ink' : 'bg-line')} />
             ))}
           </div>
         </div>
 
         <div className="mx-auto w-full max-w-[1040px] min-w-0">
-          <Vista s={s} />
+          <Vista s={{ ...s, revisarCub, verResultadoCub }} />
         </div>
 
         <div className="no-print mx-auto flex w-full max-w-[1040px] items-center justify-between gap-3 pb-4">
