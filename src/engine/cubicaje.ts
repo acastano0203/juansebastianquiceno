@@ -161,9 +161,11 @@ export function calcularCubicaje(referencias: ReferenciaCarga[], params: Paramet
 
 // Volumen y peso cobrables siempre desde mm y g, nunca desde valores redondeados
 export function basesCobro(calc: CalculoCubicaje, params: Parametros): BasesCobro {
-  const pesoKg = calc.pesoBrutoG / 1000;
-  const aereoVolumetricoKg = calc.volumenSueltoCm3 / params.factorAereoCm3Kg;
-  const courierVolumetricoKg = calc.volumenSueltoCm3 / params.factorCourierCm3Kg;
+  const sobreCarga = !!params.pesoVolumetricoSobreCarga;
+  const pesoKg = (sobreCarga ? calc.pesoCargaG : calc.pesoBrutoG) / 1000;
+  const volumenCm3 = sobreCarga ? calc.volumenCargaCm3 : calc.volumenSueltoCm3;
+  const aereoVolumetricoKg = volumenCm3 / params.factorAereoCm3Kg;
+  const courierVolumetricoKg = volumenCm3 / params.factorCourierCm3Kg;
   return {
     aereoVolumetricoKg,
     aereoCobrableKg: Math.max(pesoKg, aereoVolumetricoKg),

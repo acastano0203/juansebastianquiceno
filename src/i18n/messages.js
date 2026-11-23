@@ -1,6 +1,8 @@
 // Textos de la interfaz. Las claves se usan con t('seccion.clave', { variables }).
 import { CUB_MESSAGES } from './cubicaje';
 import { SIM_MESSAGES } from './simulador';
+import { ASI_MESSAGES } from './asistente';
+import { ACA_MESSAGES } from './academia';
 export const MESSAGES = {
   es: {
     lang: { label: 'Idioma', es: 'Español', en: 'English' },
@@ -257,6 +259,8 @@ export const MESSAGES = {
     },
     cub: CUB_MESSAGES.es,
     sim: SIM_MESSAGES.es,
+    asi: ASI_MESSAGES.es,
+    aca: ACA_MESSAGES.es,
   },
 
   en: {
@@ -514,5 +518,7 @@ export const MESSAGES = {
     },
     cub: CUB_MESSAGES.en,
     sim: SIM_MESSAGES.en,
+    asi: ASI_MESSAGES.en,
+    aca: ACA_MESSAGES.en,
   },
 };

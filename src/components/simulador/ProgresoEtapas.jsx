@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useI18n } from '../../i18n/LanguageContext';
-import { ETAPAS } from '../../engine/simulacion';
 import Brand from '../ui/Brand';
 import { Check } from '../ui/Icons';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
@@ -20,7 +19,7 @@ function Marca({ estado, n }) {
 }
 
 // Barra lateral en escritorio y franja deslizable en móvil. El orden de las etapas es libre (RN-SIM-03).
-export default function ProgresoEtapas({ etapa, completas, onIr }) {
+export default function ProgresoEtapas({ etapas, etapa, completas, onIr }) {
   const { t } = useI18n();
   const estadoDe = (e) => (e === etapa ? 'curso' : completas[e] ? 'completa' : 'pendiente');
   const actual = useRef(null);
@@ -37,8 +36,8 @@ export default function ProgresoEtapas({ etapa, completas, onIr }) {
         <LanguageSwitcher compact />
       </div>
       <nav aria-label={t('sim.progreso')} className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
-        <ol className="m-0 flex list-none gap-1 p-0 lg:flex-col lg:gap-1.5">
-          {ETAPAS.map((e, i) => {
+        <ol className="m-0 flex list-none gap-1 p-0 lg:flex-col lg:gap-0.5">
+          {etapas.map((e, i) => {
             const estado = estadoDe(e);
             return (
               <li key={e} ref={e === etapa ? actual : null} className="flex-none">

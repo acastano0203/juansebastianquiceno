@@ -1,14 +1,15 @@
-import { useRef, useState } from 'react';
 import { useI18n } from '../../i18n/LanguageContext';
 import { PARAMS } from '../../config/params';
+import { EXPLICACION_INCOTERM } from '../../config/asistente/asistente.config';
+import { EMPAQUES } from '../../config/asistente/cubicaje.config';
+import { partidaPorCodigo } from '../../config/asistente/partidas';
 import { enlaceWhatsApp } from '../../lib/contacto';
-import { formatoDinero, formatoKg, formatoM3, formatoNumero, formatoPct } from '../../engine/unidades';
+import { formatoDinero, formatoNumero } from '../../engine/unidades';
 import { Button } from '../ui/Button';
 import { Download, Refresh } from '../ui/Icons';
 import { Aviso, Dato, ListaAlertas, Tarjeta } from './Campos';
 import BotonWhatsApp from './BotonWhatsApp';
-import Escenarios from './Escenarios';
-import VisorCarga from './VisorCarga';
+import { primeraPendiente } from './asistente/etapas';
 
 // Una sola serie: barras delgadas con su valor al lado; el tramo se nombra en cada fila
 function CostoPorTramo({ r, incoterm }) {
@@ -39,31 +40,66 @@ function CostoPorTramo({ r, incoterm }) {
   );
 }
 
+/** Lo que el asistente dedujo, explicado en una línea cada cosa. Se usa en el resultado y en el reporte. */
+export function ResumenSimple({ snapshot }) {
+  const { t, lang } = useI18n();
+  const a = snapshot.asistente;
+  const resp = snapshot.respuestas;
+  const cub = a.cubicaje;
+  const n = (v, d = 0) => formatoNumero(v, d, lang);
+  const partida = partidaPorCodigo(resp.partida);
+  const e = cub ? EMPAQUES[cub.empaque] : null;
+  const unidades = cub && e.forma !== 'granel' ? t('asi.emp.unidad.' + cub.empaque, { n: n(cub.unidades) }) : null;
+  const contenedores = cub?.fcl?.elegido ? `${cub.fcl.elegido.cantidad} × ${t('asi.contenedor.' + cub.fcl.elegido.contenedorId)}` : null;
+
+  let cobro = null;
+  if (cub?.tipoCarga === 'LCL') cobro = t('asi.res.cobroLcl', { m: n(cub.wm.cobrable, 2), t: n(cub.wm.pesoT, 2), v: n(cub.wm.volumenM3, 2), q: t('asi.cub.mandaV.' + cub.wm.manda).toLowerCase() });
+  if (cub?.tipoCarga === 'AEREO') cobro = t('asi.res.cobroKg', { k: n(cub.aereo.cobrableKg, 1), r: n(cub.aereo.realKg, 1), v: n(cub.aereo.volumetricoKg, 1), f: cub.aereo.factor });
+  if (cub?.tipoCarga === 'COURIER') cobro = t('asi.res.cobroKg', { k: n(cub.courier.cobrableKg, 1), r: n(cub.courier.realKg, 1), v: n(cub.courier.volumetricoKg, 1), f: cub.courier.factor });
+
+  const filas = [
+    { k: t('asi.res.modalidad'), v: t('asi.via.nombre.' + a.via), d: t('asi.tipoCarga.' + cub?.tipoCarga) },
+    { k: t('asi.res.incoterm'), v: a.incoterm, d: EXPLICACION_INCOTERM[a.incoterm]?.[lang] },
+    { k: t('asi.res.partida'), v: partida?.codigo, d: partida?.nombre[lang] },
+    unidades && { k: t('asi.res.unidades'), v: unidades, d: cub.plan ? t(cub.pallets.length === 1 ? 'asi.res.enPallet' : 'asi.res.enPallets', { p: n(cub.pallets.length), u: n(cub.plan.unidadesPorPallet), tipo: t('asi.palletNombre.' + cub.palletId) }) : t('asi.res.sinPallet') },
+    contenedores && { k: t('asi.res.contenedores'), v: contenedores, d: t('asi.res.contenedoresD') },
+    cub && { k: t('asi.res.carga'), v: `${n(cub.volumenM3, 2)} m³ · ${n(cub.pesoBrutoKg)} kg`, d: cobro },
+  ].filter(Boolean);
+
+  return (
+    <dl className="m-0 grid gap-2.5 sm:grid-cols-2">
+      {filas.map((f) => (
+        <div key={f.k} className="flex break-inside-avoid flex-col gap-0.5 rounded-2xl bg-mist-2 px-4 py-3">
+          <dt className="text-[13px] text-muted">{f.k}</dt>
+          <dd className="m-0 font-serif text-[20px] leading-tight font-semibold">{f.v ?? '—'}</dd>
+          {f.d && <dd className="m-0 text-[13px] leading-normal text-muted">{f.d}</dd>}
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 export default function EtapaResultado({ s }) {
   const { t, lang } = useI18n();
-  const { snapshot, estado, codigo, vencida, calcular, faltantes, irA } = s;
-  const [verEscenarios, setVerEscenarios] = useState(false);
-  const refEscenarios = useRef();
+  const { snapshot, estado, codigo, vencida, calcular, faltantes, irA, captura3D, respuestas, completas } = s;
 
   if (!snapshot) {
+    const pendiente = primeraPendiente(respuestas, completas);
     return (
       <Tarjeta className="flex flex-col items-start gap-3">
-        <h1 className="m-0 font-serif text-[28px] font-semibold">{t('sim.res.sinCalcular')}</h1>
-        <p className="m-0 text-sm text-muted">{t('sim.res.sinCalcularD')}</p>
-        {faltantes.length > 0 && <Aviso tono="arcilla">{t('sim.cos.faltan', { f: faltantes.map((f) => t('sim.faltante.' + f)).join(', ') })}</Aviso>}
-        <Button variant="ink" onClick={() => irA('costos')}>{t('sim.res.irACostos')}</Button>
+        <h1 className="m-0 font-serif text-[28px] font-semibold">{t('asi.res.sinCalcular')}</h1>
+        <p className="m-0 text-sm text-muted">{pendiente ? t('asi.res.sinCalcularD', { p: t('sim.etapas.' + pendiente) }) : t('asi.res.listo')}</p>
+        {pendiente ? <Button variant="ink" onClick={() => irA(pendiente)}>{t('asi.res.irA', { p: t('sim.etapas.' + pendiente) })}</Button> : <Button variant="ink" disabled={faltantes.length > 0} onClick={calcular}>{t('asi.res.calcular')}</Button>}
       </Tarjeta>
     );
   }
 
   const r = snapshot.resultado;
-  const entradas = snapshot.entradas;
   const ren = r.rentabilidad;
-  const op = entradas.operacion;
-  const ev = r.seleccion ? r.equipos.find((e) => e.equipoId === r.seleccion.equipoId) : null;
-  const equipo = r.seleccion ? PARAMS.equipos.find((e) => e.id === r.seleccion.equipoId) : null;
+  const op = snapshot.entradas.operacion;
+  const conCostos = snapshot.respuestas.necesidad !== 'CUBICAJE';
+  const libras = snapshot.entradas.productos.reduce((x, p) => x + p.cantidad, 0) * PARAMS.kgALibra;
   const fecha = new Date(snapshot.calculadoEn).toLocaleString(lang === 'en' ? 'en-US' : 'es-CO', { timeZone: 'America/Bogota', dateStyle: 'medium', timeStyle: 'short' });
-  const tresAlertas = r.alertas.slice(0, 3); // RN-RES-02
   const desactualizado = estado === 'BORRADOR';
 
   return (
@@ -83,85 +119,62 @@ export default function EtapaResultado({ s }) {
 
       <Tarjeta className="flex flex-col gap-5">
         <header className="flex flex-col gap-1">
-          <h1 className="m-0 font-serif text-[28px] leading-tight font-semibold md:text-[34px]">{t('sim.res.titulo')}</h1>
-          {/* RN-RES-01 */}
+          <h1 className="m-0 font-serif text-[28px] leading-tight font-semibold md:text-[34px]">{t('asi.res.titulo')}</h1>
           <p className="m-0 text-[13px] text-muted">
-            {codigo} · {t('sim.res.metaFecha')} {fecha} · {r.moneda} · {t('sim.res.metaTasa', { v: formatoNumero(r.tasaReferencia, 2, lang) })} · {r.vigenciaMinima ? t('sim.res.metaVigencia', { f: r.vigenciaMinima }) : t('sim.res.metaSinVigencia')}
+            {codigo} · {fecha} · {op.origen.ciudad} → {op.destino.ciudad}
           </p>
         </header>
+        <Aviso tono="oro">{t('asi.res.estimacion')}</Aviso>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <Dato etiqueta={t('sim.res.modalidad')} valor={t('sim.modalidad.' + r.modalidadEfectiva)} nota={`${op.origen.ciudad} → ${op.destino.ciudad}`} />
-          <Dato etiqueta={t('sim.res.equipo')} valor={equipo ? equipo.nombre[lang] : t('sim.res.sinEquipo')} nota={r.cubicaje.totalPallets ? t('sim.res.nPallets', { n: formatoNumero(r.cubicaje.totalPallets, 0, lang) }) : null} />
-          <Dato etiqueta={t('sim.res.carga')} valor={formatoM3(r.cubicaje.volumenCargaCm3, lang)} nota={t('sim.res.kgBrutos', { k: formatoKg(r.cubicaje.pesoCargaG, lang) })} />
-          <Dato etiqueta={t('sim.res.ocupacion')} valor={ev ? formatoPct(ev.ocupacionVolumen, lang) : '—'} nota={`${ev ? `${formatoPct(ev.ocupacionPeso, lang)} ${t('sim.res.peso')} · ` : ''}${t('sim.res.completitud')} ${formatoNumero(r.completitud, 0, lang)} %`} />
-        </div>
+        {conCostos && (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Dato etiqueta={ren.parcial ? t('sim.cos.totalParcial') : t('asi.res.total')} valor={formatoDinero(ren.total, r.moneda, lang)} nota={t('asi.res.totalNota', { i: op.incoterm })} />
+            <Dato etiqueta={t('asi.res.porLibra')} valor={libras > 0 ? formatoDinero(ren.total / libras, r.moneda, lang) : '—'} nota={t('asi.res.porLibraNota')} />
+            {ren.precioSugerido != null && <Dato etiqueta={t('asi.res.precioVenta')} valor={libras > 0 ? formatoDinero(ren.precioSugerido / libras, r.moneda, lang) : '—'} nota={t('asi.res.precioVentaNota', { m: formatoNumero((ren.margen ?? 0) * 100, 0, lang) })} />}
+          </div>
+        )}
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <section className="flex min-w-0 flex-col gap-3">
-            <h2 className="m-0 font-serif text-xl font-semibold">{t('sim.res.costoTramo')} · {r.moneda}</h2>
-            <CostoPorTramo r={r} incoterm={op.incoterm} />
-            <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-3">
-              <span className="text-sm font-semibold">{ren.parcial ? t('sim.cos.totalParcial') : t('sim.res.totalNota')}</span>
-              <span className="font-serif text-[26px] font-semibold">{formatoDinero(ren.total, r.moneda, lang)}</span>
-            </div>
-            {ren.parcial && <span className="text-xs text-muted">{t('sim.res.totalNota')}. {t('sim.res.faltantes', { l: ren.faltantes.map((f) => f.nombre[lang]).join(', ') })}</span>}
-            {ren.costoKgNeto != null && (
-              <span className="text-sm text-muted">
-                {ren.parcial ? t('sim.res.unitarioParcial', { v: formatoDinero(ren.costoKgNeto, r.moneda, lang) }) : t('sim.res.unitario', { v: formatoDinero(ren.costoKgNeto, r.moneda, lang) })}
-              </span>
-            )}
-            {ren.precioSugerido != null && (
-              <div className="rounded-2xl bg-mist-2 px-4 py-3">
-                <span className="block text-sm">{t('sim.res.precio', { i: op.incoterm })}{ren.parcial ? ` · ${t('sim.esc.parcial')}` : ''}</span>
-                <span className="block font-serif text-2xl font-semibold">{formatoDinero(ren.precioSugerido, r.moneda, lang)}</span>
-                <span className="block text-xs text-muted">{t('sim.res.utilidad', { v: formatoDinero(ren.utilidad, r.moneda, lang), m: formatoPct(ren.margen, lang) })}</span>
-              </div>
-            )}
-          </section>
-          <section className="rounded-2xl bg-[#fbf3dc] p-4">
-            <h2 className="m-0 mb-3 font-serif text-xl font-semibold">{t('sim.res.alertas')}</h2>
-            {tresAlertas.length ? <ListaAlertas alertas={tresAlertas} lang={lang} /> : <p className="m-0 text-sm text-muted">{t('sim.res.sinAlertas')}</p>}
-          </section>
-        </div>
+        <section className="flex flex-col gap-3">
+          <h2 className="m-0 font-serif text-xl font-semibold">{t('asi.res.loQueCalculamos')}</h2>
+          <ResumenSimple snapshot={snapshot} />
+          {snapshot.asistente.precioEsReferencia && conCostos && <p className="m-0 text-xs text-muted">{t('asi.res.precioReferencia', { v: formatoDinero(snapshot.asistente.precioLibraCop, 'COP', lang) })}</p>}
+        </section>
 
-        {/* RN-RES-09 */}
+        {captura3D && (
+          <figure className="m-0 flex flex-col gap-1.5">
+            <img src={captura3D} alt={t('asi.res.imagenAlt')} className="w-full rounded-2xl border border-line" />
+            <figcaption className="text-xs text-muted">{t('asi.res.imagenPie')}</figcaption>
+          </figure>
+        )}
+
+        {conCostos && (
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <section className="flex min-w-0 flex-col gap-3">
+              <h2 className="m-0 font-serif text-xl font-semibold">{t('sim.res.costoTramo')} · {r.moneda}</h2>
+              <CostoPorTramo r={r} incoterm={op.incoterm} />
+            </section>
+            <section className="rounded-2xl bg-[#fbf3dc] p-4">
+              <h2 className="m-0 mb-3 font-serif text-xl font-semibold">{t('sim.res.alertas')}</h2>
+              {r.alertas.length ? <ListaAlertas alertas={r.alertas.slice(0, 3)} lang={lang} /> : <p className="m-0 text-sm text-muted">{t('sim.res.sinAlertas')}</p>}
+            </section>
+          </div>
+        )}
+
         <div className="no-print flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
           <Button variant="gold" size="lg" onClick={() => irA('reporte')}>
             <Download size={16} />
             {t('sim.res.desbloquear')}
           </Button>
           <BotonWhatsApp mensaje={t('sim.res.msgExperto', { c: codigo })}>{t('sim.res.experto')}</BotonWhatsApp>
-          <Button
-            variant="outline-ink"
-            size="lg"
-            onClick={() => {
-              setVerEscenarios(true);
-              setTimeout(() => refEscenarios.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-            }}
-          >
-            {t('sim.res.comparar')}
-          </Button>
+          <Button variant="outline-ink" size="lg" onClick={() => irA('empaque')}>{t('asi.res.verCarga')}</Button>
         </div>
         {!enlaceWhatsApp('x') && <p className="no-print m-0 text-xs text-muted">{t('sim.res.asesorInactivo')}</p>}
-      </Tarjeta>
-
-      {(verEscenarios || s.escenarios.length > 0) && (
-        <div ref={refEscenarios} className="no-print min-w-0 scroll-mt-4">
-          <Tarjeta>
-            <Escenarios s={s} entradas={entradas} />
-          </Tarjeta>
-        </div>
-      )}
-
-      <Tarjeta>
-        <VisorCarga equipo={equipo} bloques={r.bloques} cubicaje={r.cubicaje} referencias={entradas.referencias} />
       </Tarjeta>
 
       {/* RN-SEG-10: descargos visibles en pantalla e impresión */}
       <div className="flex flex-col gap-2 text-xs leading-[1.5] text-muted">
         <p className="m-0">{PARAMS.textosLegales.resultado[lang]}</p>
-        <p className="m-0">{PARAMS.textosLegales.tributos[lang]}</p>
+        <p className="m-0">{PARAMS.textosLegales.cubicaje[lang]}</p>
       </div>
     </div>
   );

@@ -45,6 +45,8 @@ export interface FleteTentativo {
   documentos: number; // USD por embarque
   fumigacionPorEquipo: number; // USD
   seguro: { tasa: number; primaMinima: number }; // USD, si no hay regla de seguro para la ruta
+  /** Gastos locales tentativos (origen o entrega) por rubro, en USD: máx(mínimo, fijo + porKg × kg brutos). */
+  locales?: Record<string, { fijo: number; porKg?: number; minimo?: number }>;
 }
 
 export interface DetalleTentativo {
@@ -170,6 +172,8 @@ export interface Simulacion {
   productos: Producto[];
   referencias: ReferenciaCarga[];
   equipoId: string | null; // null = usar el recomendado
+  /** Cantidad de equipos elegidos junto con equipoId (multicontenedor). Por defecto 1. */
+  equipoCantidad?: number;
   overrides: Record<string, OverrideRubro>;
   otros: RubroOtro[];
   rubrosActivados: string[]; // rubros opcionales que el usuario agregó
@@ -315,6 +319,8 @@ export interface Parametros {
   reglasAlerta: ReglaAlerta[];
   fronterasTerrestres: [string, string][];
   fleteTentativo?: FleteTentativo;
+  /** true: el peso volumetrico aereo/courier se calcula sobre la carga lista (pallets incluidos), no sobre los bultos sueltos. */
+  pesoVolumetricoSobreCarga?: boolean;
   textosLegales: { cubicaje: Texto; tributos: Texto; resultado: Texto; datos: Texto };
 }
 

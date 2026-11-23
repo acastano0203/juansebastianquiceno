@@ -1,69 +1,63 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
-import { ETAPAS, etapasCompletas } from '../../engine/simulacion';
 import { Button } from '../../components/ui/Button';
 import { ArrowRight, ChevronLeft } from '../../components/ui/Icons';
 import ProgresoEtapas from '../../components/simulador/ProgresoEtapas';
-import EtapaOperacion from '../../components/simulador/EtapaOperacion';
-import EtapaProducto from '../../components/simulador/EtapaProducto';
-import EtapaCubicaje, { faltantesReferencia } from '../../components/simulador/EtapaCubicaje';
-import ResultadoCubicaje from '../../components/simulador/ResultadoCubicaje';
-import EtapaCostos from '../../components/simulador/EtapaCostos';
+import { PasoDestino, PasoEntrega, PasoNecesidad, PasoProducto, PasoVolumen } from '../../components/simulador/asistente/PasosIniciales';
+import PasoEmpaque from '../../components/simulador/asistente/PasoEmpaque';
+import PasoPrecio from '../../components/simulador/asistente/PasoPrecio';
 import EtapaResultado from '../../components/simulador/EtapaResultado';
 import EtapaReporte from '../../components/simulador/EtapaReporte';
 import EtapaSoporte from '../../components/simulador/EtapaSoporte';
 import { useSimulacion } from '../../components/simulador/useSimulacion';
+import { esDeEntrada, primeraPendiente } from '../../components/simulador/asistente/etapas';
 
-const VISTAS = { operacion: EtapaOperacion, producto: EtapaProducto, cubicaje: EtapaCubicaje, costos: EtapaCostos, resultado: EtapaResultado, reporte: EtapaReporte, soporte: EtapaSoporte };
+const VISTAS = {
+  destino: PasoDestino,
+  necesidad: PasoNecesidad,
+  volumen: PasoVolumen,
+  entrega: PasoEntrega,
+  producto: PasoProducto,
+  empaque: PasoEmpaque,
+  precio: PasoPrecio,
+  resultado: EtapaResultado,
+  reporte: EtapaReporte,
+  soporte: EtapaSoporte,
+};
 
 export default function Simulador() {
   const { t } = useI18n();
   const [params, setParams] = useSearchParams();
-  const s = useSimulacion(params.get('etapa'), params.get('vista'));
-  const { etapa, irA, sim, snapshot, estado, cubVista, setCubVista } = s;
-  const indice = ETAPAS.indexOf(etapa);
-  // La etapa Cubicaje tiene dos pantallas: referencias de carga y resultado (láminas 09 y 10)
-  const enResultadoCub = etapa === 'cubicaje' && cubVista === 'resultado';
-  const Vista = enResultadoCub ? ResultadoCubicaje : VISTAS[etapa];
-  const completas = useMemo(() => etapasCompletas(sim, !!snapshot && estado !== 'BORRADOR'), [sim, snapshot, estado]);
+  const s = useSimulacion(params.get('etapa'));
+  const { etapa, etapas, irA, completas, ultimaDeEntrada } = s;
+  // Si el paso actual dejó de aplicar (p. ej. Precio cuando solo se quiere el cubicaje), se usa el siguiente visible
+  const actual = etapas.includes(etapa) ? etapa : 'resultado';
+  const indice = etapas.indexOf(actual);
+  const Vista = VISTAS[actual];
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setParams(enResultadoCub ? { etapa, vista: 'resultado' } : { etapa }, { replace: true });
-  }, [etapa, enResultadoCub]); // eslint-disable-line react-hooks/exhaustive-deps
+    setParams({ etapa: actual }, { replace: true });
+  }, [actual]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Desde Costos solo se avanza calculando, y calcular exige los mínimos y los costos de origen cubiertos
-  const bloqueado = etapa === 'costos' && s.faltantes.length > 0;
-  // En Cubicaje, si algún empaque está incompleto no se pasa al resultado: se marcan los campos que faltan
-  const [revisarCub, setRevisarCub] = useState(false);
-  const verResultadoCub = () => {
-    const incompleto = sim.referencias.find((r) => faltantesReferencia(r).length > 0);
-    if (!incompleto) return setCubVista('resultado');
-    setRevisarCub(true);
-    setTimeout(() => document.getElementById('empaque-' + incompleto.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
-  };
+  const incompleto = esDeEntrada(actual) && !completas[actual];
+  const calcula = actual === ultimaDeEntrada;
+  const pendiente = calcula && !incompleto ? primeraPendiente(s.respuestas, completas) : null;
   const siguiente = () => {
-    if (etapa === 'costos') s.calcular();
-    else if (etapa === 'cubicaje' && !enResultadoCub) verResultadoCub();
-    else irA(ETAPAS[indice + 1]);
-  };
-  const anterior = () => {
-    if (enResultadoCub) setCubVista('referencias');
-    else if (ETAPAS[indice - 1] === 'cubicaje') irA('cubicaje', 'resultado');
-    else irA(ETAPAS[indice - 1]);
+    if (calcula) s.calcular();
+    else irA(etapas[indice + 1]);
   };
 
   return (
     <div className="flex min-h-screen min-w-0 flex-col bg-mist text-ink lg:flex-row">
-      <ProgresoEtapas etapa={etapa} completas={completas} onIr={irA} />
+      <ProgresoEtapas etapas={etapas} etapa={actual} completas={completas} onIr={irA} />
 
       <main className="flex min-w-0 flex-1 flex-col gap-4 px-4 py-5 md:px-8 md:py-7">
         <div className="no-print mx-auto flex w-full max-w-[1040px] flex-col gap-2.5">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
             <span className="font-semibold">
-              {t('sim.paso', { n: indice + 1 })} · {t('sim.etapas.' + etapa)}
-              {enResultadoCub && ` · ${t('sim.cub.subResultado')}`}
+              {t('sim.paso', { n: indice + 1, total: etapas.length })} · {t('sim.etapas.' + actual)}
             </span>
             <span className="flex flex-wrap items-center gap-x-4">
               <button type="button" onClick={s.cargarEjemplo} className="min-h-9 cursor-pointer border-0 bg-transparent p-0 text-muted underline">
@@ -82,28 +76,49 @@ export default function Simulador() {
               </Link>
             </span>
           </div>
-          <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={ETAPAS.length} aria-valuenow={indice + 1} aria-label={t('sim.progreso')}>
-            {ETAPAS.map((e, i) => (
-              // Dorado = etapa completa; oscuro = la actual; claro = pendiente (aunque ya se haya pasado por ella)
+          <div className="flex gap-1.5" role="progressbar" aria-valuemin={1} aria-valuemax={etapas.length} aria-valuenow={indice + 1} aria-label={t('sim.progreso')}>
+            {etapas.map((e, i) => (
+              // Dorado = etapa completa; oscuro = la actual; claro = pendiente
               <span key={e} className={'h-1.5 flex-1 rounded-full ' + (completas[e] ? 'bg-gold' : i === indice ? 'bg-ink' : 'bg-line')} />
             ))}
           </div>
         </div>
 
         <div className="mx-auto w-full max-w-[1040px] min-w-0">
-          <Vista s={{ ...s, revisarCub, verResultadoCub }} />
+          <Vista s={s} />
         </div>
 
-        <div className="no-print mx-auto flex w-full max-w-[1040px] items-center justify-between gap-3 pb-4">
-          <Button variant="outline" disabled={indice === 0} onClick={anterior}>
-            <ChevronLeft size={16} />
-            {t('sim.anterior')}
-          </Button>
-          {indice < ETAPAS.length - 1 && (
-            <Button variant="ink" onClick={siguiente} disabled={bloqueado} title={bloqueado ? t('sim.cos.faltan', { f: s.faltantes.map((f) => t('sim.faltante.' + f)).join(', ') }) : undefined}>
-              {etapa === 'cubicaje' && !enResultadoCub ? t('sim.cub.verResultado') : etapa === 'costos' ? t('sim.cos.calcular') : etapa === 'reporte' ? t('sim.terminar') : t('sim.siguiente')}
-              <ArrowRight size={16} />
+        <div className="no-print mx-auto flex w-full max-w-[1040px] flex-col gap-2 pb-4">
+          <div className="flex items-center justify-between gap-3">
+            <Button variant="outline" disabled={indice === 0} onClick={() => irA(etapas[indice - 1])}>
+              <ChevronLeft size={16} />
+              {t('sim.anterior')}
             </Button>
+            {indice < etapas.length - 1 && (
+              <Button variant="ink" onClick={siguiente} disabled={incompleto || !!pendiente || (calcula && s.faltantes.length > 0)}>
+                {calcula ? t('asi.verResultado') : actual === 'reporte' ? t('sim.terminar') : t('sim.siguiente')}
+                <ArrowRight size={16} />
+              </Button>
+            )}
+          </div>
+          {incompleto && <p className="m-0 text-right text-[13px] text-muted">{t('asi.falta.' + actual)}</p>}
+          {/* Nunca dejar el botón apagado sin explicar por qué */}
+          {calcula && !incompleto && !pendiente && s.faltantes.length > 0 && (() => {
+            const f = s.faltantes.find((x) => x !== 'COSTOS_ORIGEN');
+            const texto = f ? t(`asi.faltaMotor.${f}.t`) : t('asi.faltaCalculo');
+            const ir = f ? t(`asi.faltaMotor.${f}.e`) : 'soporte';
+            return (
+              <p className="m-0 text-right text-[13px] text-muted" data-faltantes={s.faltantes.join(',')}>
+                {texto}{' '}
+                <button type="button" onClick={() => irA(ir)} className="cursor-pointer border-0 bg-transparent p-0 font-semibold text-ink underline">{t('sim.etapas.' + ir)}</button>
+              </p>
+            );
+          })()}
+          {pendiente && (
+            <p className="m-0 text-right text-[13px] text-muted">
+              {t('asi.faltaAntes')}{' '}
+              <button type="button" onClick={() => irA(pendiente)} className="cursor-pointer border-0 bg-transparent p-0 font-semibold text-ink underline">{t('sim.etapas.' + pendiente)}</button>
+            </p>
           )}
         </div>
       </main>

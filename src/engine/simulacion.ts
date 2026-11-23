@@ -58,7 +58,7 @@ export function calcularSimulacion(entrada: Simulacion, params: Parametros, hoy:
   const recomendado = recomendarEquipo(evaluaciones, params, costos);
 
   const usaEquipo = ['MARITIMA_FCL', 'MULTIMODAL', 'POR_EVALUAR'].includes(op.modalidad);
-  const elegido = usaEquipo && sim.equipoId && evaluaciones.some((e) => e.equipoId === sim.equipoId) ? { equipoId: sim.equipoId, cantidad: 1, recomendado: sim.equipoId === recomendado?.equipoId } : null;
+  const elegido = usaEquipo && sim.equipoId && evaluaciones.some((e) => e.equipoId === sim.equipoId) ? { equipoId: sim.equipoId, cantidad: Math.max(1, sim.equipoCantidad ?? 1), recomendado: sim.equipoId === recomendado?.equipoId } : null;
   const modalidad = resolverModalidad(op.modalidad, referencias, elegido ?? recomendado);
   const seleccion = ['MARITIMA_FCL', 'MULTIMODAL'].includes(modalidad) ? (elegido ?? recomendado) : null;
   const evaluacion = seleccion ? (evaluaciones.find((e) => e.equipoId === seleccion.equipoId) ?? null) : null;

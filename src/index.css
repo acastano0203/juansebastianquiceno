@@ -70,6 +70,24 @@
   }
 }
 
+/* Cada bloque nuevo de la conversación entra suave */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+  }
+}
+
 @media print {
   @page {
     margin: 12mm;

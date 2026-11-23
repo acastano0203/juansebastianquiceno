@@ -12,13 +12,16 @@ export default function SiteHeader() {
 
   return (
     <header className="relative flex flex-wrap items-center justify-between gap-6 py-5 md:py-7">
-      <Brand />
+      <Brand logo />
       <nav aria-label={t('nav.main')} className="hidden items-center gap-8 text-[15px] md:flex">
         <Link to="/simulador" className="text-pale no-underline hover:text-white">
           {t('nav.simulador')}
         </Link>
         <Link to="/cubicaje" className="text-pale no-underline hover:text-white">
           {t('hero.ctaCubicar')}
+        </Link>
+        <Link to="/academia" className="text-pale no-underline hover:text-white">
+          {t('aca.menu')}
         </Link>
         <LanguageSwitcher />
         <ButtonLink to="/simulador" variant="outline-gold" size="md" lift className="px-[22px]">
@@ -41,6 +44,9 @@ export default function SiteHeader() {
         <nav aria-label={t('nav.main')} className="flex w-full flex-col gap-1 rounded-[20px_20px_20px_4px] bg-ink-2 p-3 md:hidden">
           <Link to="/cubicaje" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
             {t('hero.ctaCubicar')}
+          </Link>
+          <Link to="/academia" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
+            {t('aca.menu')}
           </Link>
           <ButtonLink to="/simulador" variant="gold" size="md" className="mt-1">
             {t('nav.cta')}

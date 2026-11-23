@@ -5,7 +5,15 @@ import { Button } from '../ui/Button';
 import { Check, Download, Refresh } from '../ui/Icons';
 import { Aviso, Tarjeta } from './Campos';
 import BotonWhatsApp from './BotonWhatsApp';
-import { useNombreEmpaque } from './EtapaCubicaje';
+import { ResumenSimple } from './EtapaResultado';
+
+export function useNombreEmpaque() {
+  const { t } = useI18n();
+  return (empaque) => {
+    const id = empaque || 'NINGUNO';
+    return { uno: t('sim.cub.empUno.' + id), varios: t('sim.cub.empVarios.' + id) };
+  };
+}
 
 const MODULOS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -60,7 +68,7 @@ function Par({ k, v }) {
 export function Documento({ s }) {
   const { t, lang } = useI18n();
   const nombreEmpaque = useNombreEmpaque();
-  const { snapshot, codigo } = s;
+  const { snapshot, codigo, captura3D } = s;
   const r = snapshot.resultado;
   const sim = snapshot.entradas;
   const op = sim.operacion;
@@ -99,7 +107,15 @@ export function Documento({ s }) {
         </div>
       </header>
 
-      <Seccion n={1} titulo={t('sim.rep.s.resumen')}>
+      {snapshot.asistente && (
+        <Seccion n={1} titulo={t('asi.rep.simple')}>
+          <ResumenSimple snapshot={snapshot} />
+          {captura3D && <img src={captura3D} alt={t('asi.res.imagenAlt')} className="w-full break-inside-avoid rounded-2xl border border-line" />}
+          <p className="m-0 text-[13px] text-muted">{t('asi.res.estimacion')}</p>
+        </Seccion>
+      )}
+
+      <Seccion n={2} titulo={t('sim.rep.s.resumen')}>
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl bg-mist-2 px-4 py-3">
             <span className="block text-[13px] text-muted">{ren.parcial ? t('sim.cos.totalParcial') : t('sim.rep.total')}</span>
@@ -130,7 +146,7 @@ export function Documento({ s }) {
         </dl>
       </Seccion>
 
-      <Seccion n={2} titulo={t('sim.rep.s.productos')}>
+      <Seccion n={3} titulo={t('sim.rep.s.productos')}>
         <Tabla
           columnas={[t('sim.prod.nombre'), t('sim.prod.cantidad'), t('sim.prod.valorUnitario'), t('sim.rep.subtotal')]}
           alinear={['i', 'd', 'd', 'd']}
@@ -143,7 +159,7 @@ export function Documento({ s }) {
         />
       </Seccion>
 
-      <Seccion n={3} titulo={t('sim.rep.s.cubicaje')}>
+      <Seccion n={4} titulo={t('sim.rep.s.cubicaje')}>
         <Tabla
           columnas={[t('sim.rep.empaque'), t('sim.rep.cantidad'), t('sim.rep.medidas'), t('sim.rep.pesoUno'), t('sim.rep.volTotal'), t('sim.rep.pesoTotal')]}
           alinear={['i', 'd', 'd', 'd', 'd', 'd']}
@@ -176,7 +192,7 @@ export function Documento({ s }) {
         <p className="m-0 text-xs text-muted">{PARAMS.textosLegales.cubicaje[lang]}</p>
       </Seccion>
 
-      <Seccion n={4} titulo={t('sim.rep.s.costos')}>
+      <Seccion n={5} titulo={t('sim.rep.s.costos')}>
         {MODULOS.map((m) => {
           const lineas = r.lineas.filter((l) => l.modulo === m && !l.informativo);
           if (!lineas.length) return null;
@@ -207,7 +223,7 @@ export function Documento({ s }) {
         </div>
       </Seccion>
 
-      <Seccion n={5} titulo={t('sim.rep.s.precio')}>
+      <Seccion n={6} titulo={t('sim.rep.s.precio')}>
         <dl className="m-0 grid gap-x-8 sm:grid-cols-2">
           <Par k={ren.parcial ? t('sim.cos.totalParcial') : t('sim.rep.total')} v={dinero(ren.total)} />
           {ren.costoKgNeto != null && <Par k={t('sim.rep.costoKg')} v={dinero(ren.costoKgNeto)} />}
@@ -218,7 +234,7 @@ export function Documento({ s }) {
         </dl>
       </Seccion>
 
-      <Seccion n={6} titulo={t('sim.rep.s.alertas')}>
+      <Seccion n={7} titulo={t('sim.rep.s.alertas')}>
         {r.alertas.length ? (
           <ul className="m-0 flex flex-col gap-1.5 pl-5 text-[13px] leading-normal">
             {r.alertas.map((a) => (
@@ -232,7 +248,7 @@ export function Documento({ s }) {
         )}
       </Seccion>
 
-      <Seccion n={7} titulo={t('sim.rep.s.supuestos')}>
+      <Seccion n={8} titulo={t('sim.rep.s.supuestos')}>
         <ul className="m-0 flex flex-col gap-1.5 pl-5 text-[13px] leading-normal">
           <li>{t('sim.rep.supTrm', { v: formatoNumero(r.tasaReferencia, 2, lang), f: r.fuenteTasa })}</li>
           {tentativas && <li>{t('sim.rep.supTentativo')}</li>}
@@ -276,7 +292,7 @@ export default function EtapaReporte({ s }) {
       <Tarjeta className="flex flex-col items-start gap-3">
         <h1 className="m-0 font-serif text-[28px] font-semibold">{t('sim.rep.sinCalcular')}</h1>
         <p className="m-0 text-sm text-muted">{t('sim.rep.sinCalcularD')}</p>
-        <Button variant="ink" onClick={() => irA('costos')}>{t('sim.res.irACostos')}</Button>
+        <Button variant="ink" onClick={() => irA('resultado')}>{t('asi.res.irResultado')}</Button>
       </Tarjeta>
     );
   }

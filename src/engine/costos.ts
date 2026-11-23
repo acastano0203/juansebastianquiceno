@@ -178,7 +178,16 @@ export function calcularLineas(ctx: ContextoCostos): { lineas: LineaCosto[]; cif
   );
 
   const tentativa = (rubro: RubroCatalogo): { usd: number; detalle: DetalleTentativo } | null => {
-    if (!ft || rubro.modulo !== 'C' || !rutaSinTarifas) return null;
+    if (!ft || !rutaSinTarifas) return null;
+    const local = ft.locales?.[rubro.codigo];
+    if (local && rubro.modulo !== 'C') {
+      const ruta = rutaTentativa();
+      if (!ruta) return null;
+      const kg = ctx.cubicaje.pesoCargaG / 1000;
+      const usd = Math.max(local.minimo ?? 0, local.fijo + (local.porKg ?? 0) * kg);
+      return { usd, detalle: { distancia: ruta.distancia, unidad: 'KG', cantidad: kg, dias: null } };
+    }
+    if (rubro.modulo !== 'C') return null;
     const base = fleteTentativoUsd();
     if (!base) return null;
     if (rubro.codigo === 'C01') return base;

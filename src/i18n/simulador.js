@@ -1,10 +1,10 @@
 // Textos del simulador "Costos y Cubicaje Inteligente". Los nombres de rubros y los textos legales viven en config/params.ts.
 export const SIM_MESSAGES = {
   es: {
-    etapas: { operacion: 'Operación', producto: 'Producto', cubicaje: 'Cubicaje', costos: 'Costos', resultado: 'Resultado', reporte: 'Reporte', soporte: 'Soporte' },
+    etapas: { destino: 'Destino', necesidad: 'Necesidad', volumen: 'Volumen', entrega: 'Entrega', producto: 'Producto', empaque: 'Empaque y carga', precio: 'Precio', resultado: 'Resultado', reporte: 'Reporte', soporte: 'Soporte' },
     terminar: 'Terminar',
     estadoEtapa: { completa: 'Completa', curso: 'En curso', pendiente: 'Pendiente' },
-    paso: 'Paso {n} de 6',
+    paso: 'Paso {n} de {total}',
     guardadoAuto: 'Guardado automático',
     guardarSalir: 'Salir',
     progreso: 'Progreso de la simulación',
@@ -332,7 +332,7 @@ export const SIM_MESSAGES = {
       unitario: 'Costo unitario: {v} por kg neto',
       unitarioParcial: '{v} por kg neto · parcial',
       faltantes: 'Rubros faltantes: {l}.',
-      alertas: 'Tres alertas',
+      alertas: 'Alertas',
       sinAlertas: 'Sin alertas por ahora.',
       precio: 'Precio {i} sugerido',
       utilidad: 'Utilidad esperada {v} con margen sobre precio de venta de {m}',
@@ -435,10 +435,10 @@ export const SIM_MESSAGES = {
     },
   },
   en: {
-    etapas: { operacion: 'Operation', producto: 'Product', cubicaje: 'Load plan', costos: 'Costs', resultado: 'Result', reporte: 'Report', soporte: 'Support' },
+    etapas: { destino: 'Destination', necesidad: 'Your need', volumen: 'Volume', entrega: 'Delivery', producto: 'Product', empaque: 'Packing and load', precio: 'Price', resultado: 'Result', reporte: 'Report', soporte: 'Support' },
     terminar: 'Finish',
     estadoEtapa: { completa: 'Complete', curso: 'In progress', pendiente: 'Pending' },
-    paso: 'Step {n} of 6',
+    paso: 'Step {n} of {total}',
     guardadoAuto: 'Saved automatically',
     guardarSalir: 'Exit',
     progreso: 'Simulation progress',
@@ -766,7 +766,7 @@ export const SIM_MESSAGES = {
       unitario: 'Unit cost: {v} per net kg',
       unitarioParcial: '{v} per net kg · partial',
       faltantes: 'Missing items: {l}.',
-      alertas: 'Three alerts',
+      alertas: 'Alerts',
       sinAlertas: 'No alerts for now.',
       precio: 'Suggested {i} price',
       utilidad: 'Expected profit {v} with a margin on sale price of {m}',

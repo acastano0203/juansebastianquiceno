@@ -3,6 +3,10 @@ import { useProximoLead } from './data/LeadsContext';
 import Landing from './pages/public/Landing';
 import Simulador from './pages/public/Simulador';
 import CubicajePublico from './pages/public/Cubicaje';
+import Academia from './pages/public/academia/Academia';
+import AcademiaMasterclass from './pages/public/academia/Masterclass';
+import AcademiaGracias from './pages/public/academia/Gracias';
+import AcademiaInscripcion from './pages/public/academia/Inscripcion';
 import Login from './pages/admin/Login';
 import AdminLayout from './components/admin/AdminLayout';
 import Pipeline from './pages/admin/Pipeline';
@@ -27,6 +31,10 @@ export default function App() {
       <Route path="/simulador" element={<Simulador />} />
       <Route path="/diagnostico" element={<Navigate to="/simulador" replace />} />
       <Route path="/cubicaje" element={<CubicajePublico />} />
+      <Route path="/academia" element={<Academia />} />
+      <Route path="/academia/masterclass" element={<AcademiaMasterclass />} />
+      <Route path="/academia/gracias" element={<AcademiaGracias />} />
+      <Route path="/academia/inscripcion" element={<AcademiaInscripcion />} />
       <Route path="/admin/login" element={<Login />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Pipeline />} />
