@@ -4,6 +4,14 @@ import { SIM_MESSAGES } from './simulador';
 import { ASI_MESSAGES } from './asistente';
 import { ACA_MESSAGES } from './academia';
 import { SOBRE_MESSAGES } from './sobreMi';
+import { CASOS_MESSAGES } from './casos';
+import { SERVICIOS_MESSAGES } from './servicios';
+import { INICIO_MESSAGES } from './inicio';
+import { CRITERIOS_MESSAGES } from './criterios';
+import { PROGRAMAS_MESSAGES } from './programas';
+import { VIDEOS_MESSAGES } from './videos';
+import { SEDES_MESSAGES } from './sedes';
+import { PIE_MESSAGES } from './pie';
 export const MESSAGES = {
   es: {
     lang: { label: 'Idioma', es: 'Español', en: 'English' },
@@ -52,7 +60,6 @@ export const MESSAGES = {
       titleEm: 'empecemos por entenderla.',
       lead: 'El diagnóstico toma 3 minutos. Al final eliges el día y la hora de la llamada.',
     },
-    footer: { areas: 'Costos · Cubicaje · Aduanas · Decisión logística', admin: 'Acceso administrativo' },
     diag: {
       title: 'Diagnóstico',
       lead: 'Seis preguntas para entender tu negocio antes de la llamada.',
@@ -165,7 +172,7 @@ export const MESSAGES = {
       actividad: 'Actividad reciente',
       verBrief: 'Ver brief completo',
     },
-    card: { score: 'Puntaje {s} de 10', fromLanding: 'Desde la landing', waiting: 'Esperando horario', noTime: 'Sin horario', noValue: 'Sin valor', brief: 'Ver brief', noCity: 'Sin ciudad' },
+    card: { score: 'Puntaje {s} de 10', fromLanding: 'Desde la landing', waiting: 'Esperando horario', noTime: 'Sin horario', noValue: 'Sin valor', brief: 'Ver brief', noCity: 'Sin ciudad', contactarAntes: 'Contactar antes de {h}', contactoVencido: 'Contacto vencido · {h}', cita: 'Cita: {f}' },
     brief: {
       crumb: 'Brief previo a la llamada',
       stage: 'Etapa',
@@ -263,6 +270,14 @@ export const MESSAGES = {
     asi: ASI_MESSAGES.es,
     aca: ACA_MESSAGES.es,
     sobre: SOBRE_MESSAGES.es,
+    casos: CASOS_MESSAGES.es,
+    servicios: SERVICIOS_MESSAGES.es,
+    inicio: INICIO_MESSAGES.es,
+    criterios: CRITERIOS_MESSAGES.es,
+    programas: PROGRAMAS_MESSAGES.es,
+    videos: VIDEOS_MESSAGES.es,
+    sedes: SEDES_MESSAGES.es,
+    ...PIE_MESSAGES.es,
   },
 
   en: {
@@ -312,7 +327,6 @@ export const MESSAGES = {
       titleEm: "let's start by understanding it.",
       lead: 'The assessment takes 3 minutes. At the end you choose the day and time for the call.',
     },
-    footer: { areas: 'Costs · Load planning · Customs · Logistics decisions', admin: 'Admin access' },
     diag: {
       title: 'Assessment',
       lead: 'Six questions to understand your business before the call.',
@@ -425,7 +439,7 @@ export const MESSAGES = {
       actividad: 'Recent activity',
       verBrief: 'View full brief',
     },
-    card: { score: 'Score {s} out of 10', fromLanding: 'From landing page', waiting: 'Awaiting time slot', noTime: 'No time set', noValue: 'No value', brief: 'View brief', noCity: 'No city' },
+    card: { score: 'Score {s} out of 10', fromLanding: 'From landing page', waiting: 'Awaiting time slot', noTime: 'No time set', noValue: 'No value', brief: 'View brief', noCity: 'No city', contactarAntes: 'Contact before {h}', contactoVencido: 'Contact overdue · {h}', cita: 'Call: {f}' },
     brief: {
       crumb: 'Pre-call brief',
       stage: 'Stage',
@@ -523,5 +537,13 @@ export const MESSAGES = {
     asi: ASI_MESSAGES.en,
     aca: ACA_MESSAGES.en,
     sobre: SOBRE_MESSAGES.en,
+    casos: CASOS_MESSAGES.en,
+    servicios: SERVICIOS_MESSAGES.en,
+    inicio: INICIO_MESSAGES.en,
+    criterios: CRITERIOS_MESSAGES.en,
+    programas: PROGRAMAS_MESSAGES.en,
+    videos: VIDEOS_MESSAGES.en,
+    sedes: SEDES_MESSAGES.en,
+    ...PIE_MESSAGES.en,
   },
 };

@@ -3,6 +3,7 @@ import { useI18n } from '../../i18n/LanguageContext';
 import { guardarAgenda, registroGuardado } from '../../services/academia';
 import { enlaceWhatsApp } from '../../lib/contacto';
 import { classes } from '../ui/Button';
+import { CircleAlert } from 'lucide-react';
 import { ArrowRight, Check, Close } from '../ui/Icons';
 
 const HORAS = ['9:00', '10:00', '11:30', '14:00', '15:30', '17:00'];
@@ -207,10 +208,7 @@ export function Campo({ id, label, error, children, className = 'flex-[1_1_180px
       {children}
       {error && (
         <p id={id + '-e'} className="m-0 flex items-center gap-1.5 text-[13px] font-medium text-[#B3261E]">
-          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7.5v5.5M12 16.5v.01" />
-          </svg>
+          <CircleAlert size={16} aria-hidden="true" />
           {error}
         </p>
       )}

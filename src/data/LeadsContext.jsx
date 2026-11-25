@@ -174,9 +174,70 @@ export function LeadsProvider({ children }) {
     [leads],
   );
 
+  // Sesión diagnóstica agendada desde el pie de las páginas. Si el WhatsApp ya es un prospecto, se le asigna la cita;
+  // si no, se crea en «Nuevo». contactarAntes: hasta cuándo se prometió el primer contacto (lo muestra la tarjeta).
+  const registrarAgenda = useCallback(
+    ({ nombre, whatsapp, correo, tema, cita, contactarAntes }) => {
+      const now = new Date().toISOString();
+      const d = digitos(whatsapp);
+      const previo = d.length >= 7 && leads.find((x) => digitos(x.whatsapp) === d);
+      const actividad = [
+        { k: previo?.cita ? 'reagendo' : 'agendo', at: now },
+        { k: 'recordatorio', at: new Date(cita.getTime() - 24 * 3600 * 1000).toISOString(), pending: true },
+      ];
+      if (previo) {
+        setLeads((ls) =>
+          ls.map((l) =>
+            l.id === previo.id
+              ? {
+                  ...l,
+                  cita: cita.toISOString(),
+                  correo: correo || l.correo,
+                  answers: { ...l.answers, area: l.answers?.area || tema },
+                  contactarAntes: contactarAntes.toISOString(),
+                  contactado: false,
+                  nuevo: true,
+                  activity: [...(l.activity || []), ...actividad],
+                }
+              : l,
+          ),
+        );
+        return previo.id;
+      }
+      const answers = { area: tema };
+      const lead = {
+        id: nuevoLeadId(nombre),
+        stage: 0,
+        nombre: nombre.trim(),
+        tipoLabel: '',
+        lugar: '',
+        answers,
+        score: puntaje(answers),
+        createdAt: now,
+        cita: cita.toISOString(),
+        fuente: 'Agenda web',
+        whatsapp: whatsapp.trim(),
+        correo: correo || '',
+        valor: 0,
+        detalles: null,
+        alertas: null,
+        cita_texto: null,
+        preguntasHechas: {},
+        propuesta: null,
+        nuevo: true,
+        contactarAntes: contactarAntes.toISOString(),
+        contactado: false,
+        activity: actividad,
+      };
+      setLeads((ls) => [lead, ...ls]);
+      return lead.id;
+    },
+    [leads],
+  );
+
   const value = useMemo(
-    () => ({ leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje }),
-    [leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje],
+    () => ({ leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje, registrarAgenda }),
+    [leads, updateLead, moveLead, addLead, resolverLead, registrarCubicaje, registrarAgenda],
   );
   return <LeadsContext.Provider value={value}>{children}</LeadsContext.Provider>;
 }

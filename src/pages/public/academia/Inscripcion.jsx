@@ -11,7 +11,7 @@ import { Curvas, EnlaceWhatsApp, PasosEmbudo, Revelar, Titulo, useArriba } from 
 import { useFechaCorta } from '../../../components/academia/interactivos';
 import { classes } from '../../../components/ui/Button';
 import { ArrowRight, Check } from '../../../components/ui/Icons';
-import { PieAcademia } from './Academia';
+import SiteFooter from '../../../components/public/SiteFooter';
 
 const ORDEN_COLUMNAS = ['pregrabado', 'vivo', 'pro'];
 
@@ -232,7 +232,8 @@ export default function Inscripcion() {
       </div>
 
       <Comparativa recomendado={recomendado} />
-      <PieAcademia />
+      {/* El pie del sitio sin la agenda diagnóstica: aquí manda la agenda de planes de la Academia */}
+      <SiteFooter conAgenda={false} />
       {agendar.modal}
     </div>
   );

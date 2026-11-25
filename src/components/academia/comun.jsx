@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/LanguageContext';
 import { enlaceWhatsApp } from '../../lib/contacto';
 import { RUTAS_ACADEMIA } from '../../config/academia';
 import { classes } from '../ui/Button';
+import { MessageCircle } from 'lucide-react';
 import { Check } from '../ui/Icons';
 
 /** Antetítulo + título serif con una palabra en itálica (patrón del diseño) */
@@ -110,11 +111,8 @@ export function PasosEmbudo({ actual, claro = true }) {
   );
 }
 
-const IconoWhatsApp = ({ size = 18 }) => (
-  <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round">
-    <path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12Z" />
-  </svg>
-);
+// Lucide no incluye logos de marcas: se usa su burbuja de chat, la forma que todos asocian con WhatsApp
+const IconoWhatsApp = ({ size = 18 }) => <MessageCircle size={size} strokeWidth={1.75} aria-hidden="true" />;
 
 /** Enlace a WhatsApp: a una URL dada (p. ej. el grupo) o al asesor con un mensaje. Sin destino queda inactivo. */
 export function EnlaceWhatsApp({ href, mensaje, variant = 'outline-white', size = 'lg', children, className = '', icono = true }) {

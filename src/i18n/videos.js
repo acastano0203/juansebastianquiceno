@@ -1,0 +1,68 @@
+// Textos de la página "Videos & Podcast": copia exacta de la sección #videos de juansebastianquiceno.com.
+// Las etiquetas del reproductor (reproducir, escuchar, etc.) son propias: el original usaba los botones de YouTube y Spotify.
+export const VIDEOS_MESSAGES = {
+  es: {
+    menu: 'Videos & Podcast',
+    badge: 'Contenido Audiovisual & Ponencias',
+    titulo: 'Conferencias, Ponencias y Clases Magistrales en Comercio Internacional',
+    intro: 'Aprende directamente de las experiencias en puertos, análisis normativos y lecciones de negociación global de Juan Sebastián Quiceno.',
+    reproducir: 'Reproducir: {titulo}',
+    seleccionar: 'Ver: {titulo}',
+    enPantalla: 'En pantalla',
+    controles: {
+      reproducir: 'Reproducir',
+      pausar: 'Pausar',
+      silenciar: 'Silenciar',
+      activarSonido: 'Activar sonido',
+      pantallaCompleta: 'Pantalla completa',
+      salirPantallaCompleta: 'Salir de pantalla completa',
+      progreso: 'Avance del video',
+    },
+    lista: [
+      { titulo: 'Estrategias de Negociación Internacional', meta: 'Lección Magistral' },
+      { titulo: 'Logística Portuaria y Cadena de Suministro', meta: 'Casos Prácticos' },
+      { titulo: 'Claves para Exportar sin Improvisar', meta: 'Mentoría COMEX' },
+      { titulo: 'Finanzas y Estructuración de Precios', meta: 'Rentabilidad Neta' },
+    ],
+    podcast: {
+      badge: 'Podcast Oficial',
+      titulo: 'Podcast Oficial: Análisis y Casos Reales en Negocios Internacionales',
+      desc: 'Episodios regulares con anécdotas de negociación en puertos, mitigación de riesgos y estrategias directivas para empresas exportadoras.',
+      escuchar: 'Escuchar el podcast',
+      abrir: 'Abrir en Spotify',
+      portadaAlt: 'Portada del podcast de Juan Sebastián Quiceno',
+    },
+  },
+  en: {
+    menu: 'Videos & Podcast',
+    badge: 'Audiovisual Insights & Keynotes',
+    titulo: 'Conferences, Keynotes & Masterclasses in Global Business',
+    intro: 'Learn directly from real port experiences, regulatory analyses, and global negotiation lessons with Juan Sebastián Quiceno.',
+    reproducir: 'Play: {titulo}',
+    seleccionar: 'Watch: {titulo}',
+    enPantalla: 'Now showing',
+    controles: {
+      reproducir: 'Play',
+      pausar: 'Pause',
+      silenciar: 'Mute',
+      activarSonido: 'Unmute',
+      pantallaCompleta: 'Full screen',
+      salirPantallaCompleta: 'Exit full screen',
+      progreso: 'Video progress',
+    },
+    lista: [
+      { titulo: 'International Negotiation Strategies', meta: 'Master Lecture' },
+      { titulo: 'Port Logistics & Supply Chain Strategy', meta: 'Practical Cases' },
+      { titulo: 'Key Principles to Export Without Guesswork', meta: 'COMEX Mentorship' },
+      { titulo: 'Finance & Export Pricing Structuring', meta: 'Net Profitability' },
+    ],
+    podcast: {
+      badge: 'Official Podcast',
+      titulo: 'Official Podcast: Analysis & Real-World Global Trade Cases',
+      desc: 'Regular episodes featuring port negotiation insights, risk mitigation, and executive strategies for global trade enterprises.',
+      escuchar: 'Listen to the podcast',
+      abrir: 'Open in Spotify',
+      portadaAlt: "Cover of Juan Sebastián Quiceno's podcast",
+    },
+  },
+};

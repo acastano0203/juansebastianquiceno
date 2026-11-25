@@ -7,6 +7,7 @@ import AcademiaHeader from '../../../components/academia/AcademiaHeader';
 import { Campo, entrada } from '../../../components/academia/ModalAgendar';
 import { Curvas, PasosEmbudo, useArriba } from '../../../components/academia/comun';
 import { classes } from '../../../components/ui/Button';
+import { LoaderCircle } from 'lucide-react';
 import { ArrowRight, ChevronLeft } from '../../../components/ui/Icons';
 
 const INDICATIVOS = ['+57', '+1', '+52', '+507', '+51', '+593', '+504', '+502', '+34'];
@@ -183,10 +184,7 @@ export default function Masterclass() {
             <button type="submit" disabled={estado === 'enviando'} aria-busy={estado === 'enviando'} className={classes({ variant: 'gold', size: 'xl', lift: estado !== 'enviando', className: 'mt-1.5 w-full disabled:!opacity-100 disabled:bg-[#E9D395]' })}>
               {estado === 'enviando' ? (
                 <>
-                  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
-                    <circle cx="12" cy="12" r="9" strokeOpacity="0.25" />
-                    <path d="M21 12a9 9 0 0 0-9-9" />
-                  </svg>
+                  <LoaderCircle size={20} strokeWidth={2.5} className="animate-spin" aria-hidden="true" />
                   {t('aca.mc.enviando')}
                 </>
               ) : (

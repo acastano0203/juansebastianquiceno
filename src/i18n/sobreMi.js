@@ -19,7 +19,7 @@ export const SOBRE_MESSAGES = {
     fotoAlt: 'Juan Sebastián Quiceno — Dirección de Negocios Internacionales',
   },
   en: {
-    menu: 'About me',
+    menu: 'About Me',
     badgeFoto: 'Years COMEX Leadership',
     badge: 'Authority & Rigor in International Trade',
     titulo: 'Juan Sebastián Quiceno: Leading Consultant in Foreign Trade & Global Supply Chain',

@@ -167,7 +167,6 @@ export const ACA_MESSAGES = {
       t2: '.',
       lead: 'Si prefieres hablar primero, escríbenos y te respondemos el mismo día hábil.',
     },
-    footer: { derechos: '© 2026 Acceso Internacional · Juan Sebastián Quiceno', ciudades: 'Miami · Ciudad de México · Panamá · Pereira' },
     msgWhatsApp: 'Hola, vengo de la Academia y quiero saber más del curso de exportación de café.',
 
     mc: {
@@ -478,7 +477,6 @@ export const ACA_MESSAGES = {
       t2: '.',
       lead: 'If you’d rather talk first, message us and we’ll reply the same business day.',
     },
-    footer: { derechos: '© 2026 Acceso Internacional · Juan Sebastián Quiceno', ciudades: 'Miami · Mexico City · Panama · Pereira' },
     msgWhatsApp: 'Hi, I’m coming from the Academy and I’d like to know more about the coffee export course.',
 
     mc: {

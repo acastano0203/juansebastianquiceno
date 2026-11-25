@@ -6,8 +6,9 @@ import { registroGuardado } from '../../../services/academia';
 import AcademiaHeader from '../../../components/academia/AcademiaHeader';
 import { Curvas, EnlaceWhatsApp, PasosEmbudo, Revelar, useArriba } from '../../../components/academia/comun';
 import { classes } from '../../../components/ui/Button';
+import { Play } from 'lucide-react';
 import { ArrowRight, Download } from '../../../components/ui/Icons';
-import { PieAcademia } from './Academia';
+import SiteFooter from '../../../components/public/SiteFooter';
 
 function Reproductor() {
   const { t } = useI18n();
@@ -27,9 +28,7 @@ function Reproductor() {
       <Curvas variante="cierre" />
       <div className="relative flex flex-col items-center gap-4 px-6 text-center">
         <span className="grid size-16 place-items-center rounded-full bg-gold md:size-[88px]">
-          <svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="#123638">
-            <path d="M8 5v14l11-7L8 5Z" />
-          </svg>
+          <Play size={30} className="ml-1 text-ink" fill="currentColor" strokeWidth={0} aria-hidden="true" />
         </span>
         <span className="max-w-[420px] text-sm text-pale">{t('aca.gr.videoPronto')}</span>
       </div>
@@ -151,7 +150,8 @@ export default function Gracias() {
           </Revelar>
         </div>
       </section>
-      <PieAcademia />
+      {/* El pie del sitio sin la agenda diagnóstica: aquí manda la agenda de planes de la Academia */}
+      <SiteFooter conAgenda={false} />
     </div>
   );
 }

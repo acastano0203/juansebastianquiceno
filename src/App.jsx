@@ -3,6 +3,12 @@ import { useProximoLead } from './data/LeadsContext';
 import Landing from './pages/public/Landing';
 import Simulador from './pages/public/Simulador';
 import SobreMi from './pages/public/SobreMi';
+import CasosExito from './pages/public/CasosExito';
+import Servicios from './pages/public/Servicios';
+import Criterios from './pages/public/Criterios';
+import Programas from './pages/public/Programas';
+import VideosPodcast from './pages/public/VideosPodcast';
+import Sedes from './pages/public/Sedes';
 import CubicajePublico from './pages/public/Cubicaje';
 import Academia from './pages/public/academia/Academia';
 import AcademiaMasterclass from './pages/public/academia/Masterclass';
@@ -30,6 +36,12 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/sobre-mi" element={<SobreMi />} />
+      <Route path="/casos-de-exito" element={<CasosExito />} />
+      <Route path="/servicios" element={<Servicios />} />
+      <Route path="/criterios" element={<Criterios />} />
+      <Route path="/programas" element={<Programas />} />
+      <Route path="/videos-podcast" element={<VideosPodcast />} />
+      <Route path="/sedes" element={<Sedes />} />
       <Route path="/simulador" element={<Simulador />} />
       <Route path="/diagnostico" element={<Navigate to="/simulador" replace />} />
       <Route path="/cubicaje" element={<CubicajePublico />} />

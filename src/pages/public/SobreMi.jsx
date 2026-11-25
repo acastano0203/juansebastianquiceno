@@ -1,14 +1,10 @@
 import { useI18n } from '../../i18n/LanguageContext';
-import SiteHeader from '../../components/public/SiteHeader';
-import SiteFooter from '../../components/public/SiteFooter';
-import RootLines from '../../components/ui/RootLines';
+import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { classes } from '../../components/ui/Button';
 import { ArrowRight, Check } from '../../components/ui/Icons';
+import { ENLACE_AGENDA } from '../../lib/contacto';
 import foto from '../../assets/juan-sebastian-quiceno-escritorio.jpg';
 
-// Mismos enlaces que la sección #sobre-juan de juansebastianquiceno.com
-// Agenda de Google Calendar de la sesión diagnóstica (la misma del sitio oficial)
-const AGENDA = 'https://calendar.app.google/zFPtJ2F63z5MpiNh9';
 // vCard propia (public/). El enlace anterior en mitarjetavirtual.com murió: el dominio expiró.
 const VCARD = '/juan-sebastian-quiceno.vcf';
 
@@ -30,14 +26,7 @@ function Foto() {
 export default function SobreMi() {
   const { t } = useI18n();
   return (
-    <div className="min-w-0 bg-white text-ink">
-      <section className="relative overflow-hidden rounded-br-[96px] bg-ink md:rounded-br-[200px]">
-        <RootLines variant="small" opacity={0.18} className="-right-[90px] -bottom-10" />
-        <div className="relative mx-auto max-w-[1240px] px-[22px] pb-10 md:px-10 md:pb-14">
-          <SiteHeader />
-        </div>
-      </section>
-
+    <PaginaSeccion>
       <section className="mx-auto grid max-w-[1240px] items-center gap-12 px-[22px] py-12 md:px-10 md:py-20 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-16">
         <Foto />
         <div className="flex min-w-0 flex-col gap-5">
@@ -54,7 +43,7 @@ export default function SobreMi() {
             ))}
           </ul>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <a href={AGENDA} target="_blank" rel="noopener noreferrer" className={classes({ variant: 'gold', size: 'lg', lift: true })}>
+            <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className={classes({ variant: 'gold', size: 'lg', lift: true })}>
               {t('sobre.ctaTalk')}
               <ArrowRight />
             </a>
@@ -64,8 +53,6 @@ export default function SobreMi() {
           </div>
         </div>
       </section>
-
-      <SiteFooter />
-    </div>
+    </PaginaSeccion>
   );
 }

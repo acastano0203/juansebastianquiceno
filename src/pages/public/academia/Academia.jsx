@@ -4,31 +4,16 @@ import { useI18n } from '../../../i18n/LanguageContext';
 import { ENLACES_ACADEMIA, RUTAS_ACADEMIA, TESTIMONIOS } from '../../../config/academia';
 import { registrarOrigen } from '../../../services/academia';
 import AcademiaHeader from '../../../components/academia/AcademiaHeader';
+import SiteFooter from '../../../components/public/SiteFooter';
 import { useAgendar } from '../../../components/academia/ModalAgendar';
 import { Curvas, EnlaceWhatsApp, PasosEmbudo, Revelar, Titulo, useArriba } from '../../../components/academia/comun';
 import { Calculadora, Errores, Faq, QuizPlan, Ruta, TarjetaRuta } from '../../../components/academia/interactivos';
 import { classes } from '../../../components/ui/Button';
+import { ChartArea, FileChartColumn, Globe, Layers, Play } from 'lucide-react';
 import { ArrowRight, Check } from '../../../components/ui/Icons';
 
-const ICONOS_PILARES = [
-  <>
-    <path d="M12 3 3 8l9 5 9-5-9-5Z" />
-    <path d="m3 13 9 5 9-5" />
-  </>,
-  <>
-    <path d="M3 20h18" />
-    <path d="m5 20 5-9 3 5 2-3 4 7" />
-  </>,
-  <>
-    <path d="M14 3H6v18h12V7l-4-4Z" />
-    <path d="M14 3v4h4" />
-    <path d="M9 17v-3M12 17v-6M15 17v-2" />
-  </>,
-  <>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z" />
-  </>,
-];
+// Capas del curso, mercado, costos y destinos
+const ICONOS_PILARES = [Layers, ChartArea, FileChartColumn, Globe];
 
 function BotonMasterclass({ className = '', size = 'lg' }) {
   const { t } = useI18n();
@@ -80,16 +65,17 @@ function Pilares() {
   return (
     <div className="relative mx-auto -mt-16 max-w-[1280px] px-5 md:px-20">
       <ul className="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
-        {t('aca.pilares').map((p, i) => (
-          <Revelar as="li" key={p} retraso={i * 80} className="flex items-center gap-3.5 rounded-2xl bg-white p-[22px] shadow-[0_12px_32px_rgba(18,54,56,0.12)]">
-            <span className="grid size-11 flex-none place-items-center rounded-xl bg-line-2 text-clay">
-              <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                {ICONOS_PILARES[i]}
-              </svg>
-            </span>
-            <span className="text-[15px] leading-[1.3] font-semibold">{p}</span>
-          </Revelar>
-        ))}
+        {t('aca.pilares').map((p, i) => {
+          const Icono = ICONOS_PILARES[i];
+          return (
+            <Revelar as="li" key={p} retraso={i * 80} className="flex items-center gap-3.5 rounded-2xl bg-white p-[22px] shadow-[0_12px_32px_rgba(18,54,56,0.12)]">
+              <span className="grid size-11 flex-none place-items-center rounded-xl bg-line-2 text-clay">
+                <Icono size={22} strokeWidth={1.75} aria-hidden="true" />
+              </span>
+              <span className="text-[15px] leading-[1.3] font-semibold">{p}</span>
+            </Revelar>
+          );
+        })}
       </ul>
     </div>
   );
@@ -142,9 +128,7 @@ function VideoOMuestra({ src, titulo, etiqueta }) {
     <div role="img" aria-label={titulo} className="relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-2xl bg-ink-2">
       <Curvas variante="cierre" />
       <span className="relative grid size-[72px] place-items-center rounded-full bg-gold transition-transform duration-300 hover:scale-105">
-        <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="#123638">
-          <path d="M8 5v14l11-7L8 5Z" />
-        </svg>
+        <Play size={26} className="ml-1 text-ink" fill="currentColor" strokeWidth={0} aria-hidden="true" />
       </span>
       <span className="absolute bottom-4 left-5 text-[13px] text-pale">{etiqueta}</span>
     </div>
@@ -271,16 +255,6 @@ function Cierre() {
   );
 }
 
-export function PieAcademia() {
-  const { t } = useI18n();
-  return (
-    <footer className="flex flex-wrap justify-between gap-3 px-5 py-7 text-[13px] text-muted md:px-20">
-      <span>{t('aca.footer.derechos')}</span>
-      <span>{t('aca.footer.ciudades')}</span>
-    </footer>
-  );
-}
-
 /** Botón dorado fijo abajo en móvil, después de pasar la portada */
 function BarraMovil() {
   const { t } = useI18n();
@@ -323,7 +297,8 @@ export default function Academia() {
       <QuizPlan />
       <Faq />
       <Cierre />
-      <PieAcademia />
+      {/* El pie del sitio sin la agenda diagnóstica: aquí manda la agenda de planes de la Academia */}
+      <SiteFooter conAgenda={false} />
       <div className="h-20 md:hidden" aria-hidden="true" />
       <BarraMovil />
       {agendar.modal}

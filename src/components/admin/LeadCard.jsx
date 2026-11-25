@@ -15,10 +15,25 @@ export function ScoreBadge({ score }) {
 }
 
 function meta(lead, t, lang) {
+  // Las sesiones agendadas desde el pie ya traen la fecha de la llamada
+  if (lead.stage === 0 && lead.cita && lead.fuente === 'Agenda web') return t('card.cita', { f: fechaCorta(lead.cita, lang) + ' · ' + hora(lead.cita, lang) });
   if (lead.stage === 0) return haceCuanto(lead.createdAt, lang);
   if (lead.stage === 1) return t('card.waiting');
   if (lead.stage === 2) return lead.cita ? fechaCorta(lead.cita, lang) + ' · ' + hora(lead.cita, lang) : t('card.noTime');
   return lead.valor ? money(lead.valor) : t('card.noValue');
+}
+
+// Promesa de la agenda del pie: "un asesor te contacta en 15–20 minutos". Se ve mientras el prospecto sigue en «Nuevo».
+function PlazoContacto({ lead }) {
+  const { t, lang } = useI18n();
+  if (lead.stage !== 0 || !lead.contactarAntes) return null;
+  const vencido = new Date(lead.contactarAntes) < new Date();
+  const h = fechaCorta(lead.contactarAntes, lang) + ' ' + hora(lead.contactarAntes, lang);
+  return (
+    <span className={'rounded-full px-2.5 py-1 text-xs font-semibold ' + (vencido ? 'bg-[#FBE4E2] text-[#8C1D18]' : 'bg-ink text-gold')}>
+      {t(vencido ? 'card.contactoVencido' : 'card.contactarAntes', { h })}
+    </span>
+  );
 }
 
 export default function LeadCard({ lead, destacado, cubicajes = [], onOpen, onDragStart, onDragEnd }) {
@@ -64,6 +79,7 @@ export default function LeadCard({ lead, destacado, cubicajes = [], onOpen, onDr
           {tipoDeLead(lead, lang)}
         </span>
         {lead.nuevo && <span className="rounded-full bg-gold/30 px-2.5 py-1 text-xs font-medium">{t('card.fromLanding')}</span>}
+        <PlazoContacto lead={lead} />
         {cubicajes.length > 0 && (
           <Link
             to={`/admin/cubicaje/${cubicajes[0].id}`}
