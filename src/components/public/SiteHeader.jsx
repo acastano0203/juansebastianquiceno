@@ -14,6 +14,9 @@ export default function SiteHeader() {
     <header className="relative flex flex-wrap items-center justify-between gap-6 py-5 md:py-7">
       <Brand logo />
       <nav aria-label={t('nav.main')} className="hidden items-center gap-8 text-[15px] md:flex">
+        <Link to="/sobre-mi" className="text-pale no-underline hover:text-white">
+          {t('sobre.menu')}
+        </Link>
         <Link to="/simulador" className="text-pale no-underline hover:text-white">
           {t('nav.simulador')}
         </Link>
@@ -42,6 +45,9 @@ export default function SiteHeader() {
       </div>
       {open && (
         <nav aria-label={t('nav.main')} className="flex w-full flex-col gap-1 rounded-[20px_20px_20px_4px] bg-ink-2 p-3 md:hidden">
+          <Link to="/sobre-mi" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
+            {t('sobre.menu')}
+          </Link>
           <Link to="/cubicaje" onClick={() => setOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-pale no-underline hover:text-white">
             {t('hero.ctaCubicar')}
           </Link>

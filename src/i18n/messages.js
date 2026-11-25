@@ -3,6 +3,7 @@ import { CUB_MESSAGES } from './cubicaje';
 import { SIM_MESSAGES } from './simulador';
 import { ASI_MESSAGES } from './asistente';
 import { ACA_MESSAGES } from './academia';
+import { SOBRE_MESSAGES } from './sobreMi';
 export const MESSAGES = {
   es: {
     lang: { label: 'Idioma', es: 'Español', en: 'English' },
@@ -261,6 +262,7 @@ export const MESSAGES = {
     sim: SIM_MESSAGES.es,
     asi: ASI_MESSAGES.es,
     aca: ACA_MESSAGES.es,
+    sobre: SOBRE_MESSAGES.es,
   },
 
   en: {
@@ -520,5 +522,6 @@ export const MESSAGES = {
     sim: SIM_MESSAGES.en,
     asi: ASI_MESSAGES.en,
     aca: ACA_MESSAGES.en,
+    sobre: SOBRE_MESSAGES.en,
   },
 };

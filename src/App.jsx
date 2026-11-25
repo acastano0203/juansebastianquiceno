@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { useProximoLead } from './data/LeadsContext';
 import Landing from './pages/public/Landing';
 import Simulador from './pages/public/Simulador';
+import SobreMi from './pages/public/SobreMi';
 import CubicajePublico from './pages/public/Cubicaje';
 import Academia from './pages/public/academia/Academia';
 import AcademiaMasterclass from './pages/public/academia/Masterclass';
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/sobre-mi" element={<SobreMi />} />
       <Route path="/simulador" element={<Simulador />} />
       <Route path="/diagnostico" element={<Navigate to="/simulador" replace />} />
       <Route path="/cubicaje" element={<CubicajePublico />} />
