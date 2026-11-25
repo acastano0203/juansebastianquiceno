@@ -12,6 +12,7 @@ import { PROGRAMAS_MESSAGES } from './programas';
 import { VIDEOS_MESSAGES } from './videos';
 import { SEDES_MESSAGES } from './sedes';
 import { PIE_MESSAGES } from './pie';
+import { CURSO_CAFE_MESSAGES } from './cursoCafe';
 export const MESSAGES = {
   es: {
     lang: { label: 'Idioma', es: 'Español', en: 'English' },
@@ -106,7 +107,7 @@ export const MESSAGES = {
       time: 'Hora',
       timeSuffix: ' · hora de Colombia',
       place: 'Duración y lugar',
-      placeVal: '30 minutos · Google Meet',
+      placeVal: '30 minutos · Videollamada',
       with: 'Con',
       topic: 'Tema',
       addCal: 'Agregar a mi calendario',
@@ -172,7 +173,7 @@ export const MESSAGES = {
       actividad: 'Actividad reciente',
       verBrief: 'Ver brief completo',
     },
-    card: { score: 'Puntaje {s} de 10', fromLanding: 'Desde la landing', waiting: 'Esperando horario', noTime: 'Sin horario', noValue: 'Sin valor', brief: 'Ver brief', noCity: 'Sin ciudad', contactarAntes: 'Contactar antes de {h}', contactoVencido: 'Contacto vencido · {h}', cita: 'Cita: {f}' },
+    card: { score: 'Puntaje {s} de 10', fromLanding: 'Desde la landing', waiting: 'Esperando horario', noTime: 'Sin horario', noValue: 'Sin valor', brief: 'Ver brief', noCity: 'Sin ciudad', contactarAntes: { whatsapp: 'WhatsApp antes de {h}', llamada: 'Llamar antes de {h}' }, contactoVencido: { whatsapp: 'WhatsApp vencido · {h}', llamada: 'Llamada vencida · {h}' }, cita: 'Cita: {f}' },
     brief: {
       crumb: 'Brief previo a la llamada',
       stage: 'Etapa',
@@ -277,6 +278,7 @@ export const MESSAGES = {
     programas: PROGRAMAS_MESSAGES.es,
     videos: VIDEOS_MESSAGES.es,
     sedes: SEDES_MESSAGES.es,
+    curso: CURSO_CAFE_MESSAGES.es,
     ...PIE_MESSAGES.es,
   },
 
@@ -373,7 +375,7 @@ export const MESSAGES = {
       time: 'Time',
       timeSuffix: ' · Colombia time',
       place: 'Length and place',
-      placeVal: '30 minutes · Google Meet',
+      placeVal: '30 minutes · Video call',
       with: 'With',
       topic: 'Topic',
       addCal: 'Add to my calendar',
@@ -439,7 +441,7 @@ export const MESSAGES = {
       actividad: 'Recent activity',
       verBrief: 'View full brief',
     },
-    card: { score: 'Score {s} out of 10', fromLanding: 'From landing page', waiting: 'Awaiting time slot', noTime: 'No time set', noValue: 'No value', brief: 'View brief', noCity: 'No city', contactarAntes: 'Contact before {h}', contactoVencido: 'Contact overdue · {h}', cita: 'Call: {f}' },
+    card: { score: 'Score {s} out of 10', fromLanding: 'From landing page', waiting: 'Awaiting time slot', noTime: 'No time set', noValue: 'No value', brief: 'View brief', noCity: 'No city', contactarAntes: { whatsapp: 'WhatsApp before {h}', llamada: 'Call before {h}' }, contactoVencido: { whatsapp: 'WhatsApp overdue · {h}', llamada: 'Call overdue · {h}' }, cita: 'Call: {f}' },
     brief: {
       crumb: 'Pre-call brief',
       stage: 'Stage',
@@ -544,6 +546,7 @@ export const MESSAGES = {
     programas: PROGRAMAS_MESSAGES.en,
     videos: VIDEOS_MESSAGES.en,
     sedes: SEDES_MESSAGES.en,
+    curso: CURSO_CAFE_MESSAGES.en,
     ...PIE_MESSAGES.en,
   },
 };

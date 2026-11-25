@@ -106,3 +106,10 @@
     background: #fff !important;
   }
 }
+
+/* Los botones "Agendar" bajan a #agendar-sesion con desplazamiento suave */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

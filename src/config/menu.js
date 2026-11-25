@@ -10,6 +10,4 @@ export const ENLACES_SITIO = [
   { to: '/videos-podcast', clave: 'videos.menu' },
   { to: '/sedes', clave: 'sedes.menu' },
   { to: '/simulador', clave: 'nav.simulador' },
-  { to: '/cubicaje', clave: 'hero.ctaCubicar' },
-  { to: '/academia', clave: 'aca.menu' },
 ];

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
-import { RUTAS_ACADEMIA } from '../../config/academia';
 import { ENLACES_SITIO } from '../../config/menu';
 import Brand from '../ui/Brand';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import { classes } from '../ui/Button';
 import { Close, Menu } from '../ui/Icons';
+import { useAgendar } from './ModalAgendar';
 
 // Mismo menú del sitio (config/menu.js) con "Inicio" delante: desde la Academia no hay hero con el logo que lleve a la portada.
 const ENLACES = [{ to: '/', clave: 'aca.nav.inicio', end: true }, ...ENLACES_SITIO];
@@ -18,19 +18,16 @@ const claseEscritorio = ({ isActive }) =>
 const claseMovil = ({ isActive }) =>
   'flex min-h-11 items-center rounded-xl px-3 no-underline ' + (isActive ? 'bg-ink-3 font-semibold text-white' : 'text-pale hover:text-white');
 
-/** Menú del diseño de la Academia: mismas marcas, colores y enlaces que el sitio, con "Academia" activa */
-export default function AcademiaHeader({ onAgendar, minimo = false }) {
+/**
+ * Menú del diseño de la Academia: mismas marcas, colores y enlaces que el sitio, con "Academia" activa.
+ * Va completo en todas las páginas del curso (antes la masterclass y "gracias" no lo tenían y la persona quedaba sin salida).
+ * Sin onAgendar, "Agendar asesoría" abre su propio modal.
+ */
+export default function AcademiaHeader({ onAgendar }) {
   const { t } = useI18n();
   const [abierto, setAbierto] = useState(false);
-
-  if (minimo) {
-    return (
-      <header className="relative flex items-center justify-between gap-4 py-5 md:py-7">
-        <Brand to={RUTAS_ACADEMIA.inicio} sub={t('aca.sub')} />
-        <LanguageSwitcher compact />
-      </header>
-    );
-  }
+  const propio = useAgendar();
+  const agendar = onAgendar || (() => propio.abrir('pro'));
 
   return (
     <header className="relative flex flex-col gap-4 py-5 md:py-6 lg:gap-5">
@@ -39,7 +36,7 @@ export default function AcademiaHeader({ onAgendar, minimo = false }) {
         <Brand logo />
         <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
-          <button type="button" onClick={() => onAgendar?.()} className={classes({ variant: 'outline-gold', size: 'md', lift: true, className: 'px-5 whitespace-nowrap' })}>
+          <button type="button" onClick={agendar} className={classes({ variant: 'outline-gold', size: 'md', lift: true, className: 'px-5 whitespace-nowrap' })}>
             {t('aca.nav.agendar')}
           </button>
         </div>
@@ -77,7 +74,7 @@ export default function AcademiaHeader({ onAgendar, minimo = false }) {
             type="button"
             onClick={() => {
               setAbierto(false);
-              onAgendar?.();
+              agendar();
             }}
             className={classes({ variant: 'gold', size: 'md', className: 'mt-1' })}
           >
@@ -85,6 +82,7 @@ export default function AcademiaHeader({ onAgendar, minimo = false }) {
           </button>
         </nav>
       )}
+      {!onAgendar && propio.modal}
     </header>
   );
 }

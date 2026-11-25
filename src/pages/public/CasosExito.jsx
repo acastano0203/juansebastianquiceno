@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useI18n } from '../../i18n/LanguageContext';
 import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { ButtonLink, classes } from '../../components/ui/Button';
-import { ENLACE_AGENDA } from '../../lib/contacto';
+import { ANCLA_AGENDA } from '../../lib/contacto';
 import { ArrowRight, Check, ChevronLeft, ChevronRight } from '../../components/ui/Icons';
 import expansion from '../../assets/casos/expansion-internacional.jpg';
 import finanzas from '../../assets/casos/finanzas-comerciales.jpg';
@@ -86,7 +86,7 @@ function Caso({ caso, foto }) {
         </div>
         {/* Reemplaza el "Consultar este Caso" (WhatsApp) del sitio original: cita concreta + herramienta propia */}
         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className={classes({ variant: 'gold', size: 'lg', lift: true })}>
+          <a href={ANCLA_AGENDA} className={classes({ variant: 'gold', size: 'lg', lift: true })}>
             {t('casos.agendar')}
             <ArrowRight />
           </a>

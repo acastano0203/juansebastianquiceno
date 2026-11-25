@@ -99,7 +99,7 @@ export default function Gracias() {
       <section className="relative overflow-hidden rounded-br-[96px] bg-ink pb-24 md:rounded-br-[240px] md:pb-[140px]">
         <Curvas />
         <div className="relative mx-auto max-w-[1040px] px-5 md:px-10">
-          <AcademiaHeader minimo />
+          <AcademiaHeader />
           <div className="pb-6">
             <PasosEmbudo actual={2} />
           </div>

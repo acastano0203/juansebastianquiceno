@@ -14,12 +14,13 @@ function cliente() {
 }
 
 /** Guarda la solicitud. Lanza error si Supabase está configurado y falla (la pantalla ofrece reintentar). */
-export async function guardarAgendaDiagnostico({ nombre, whatsapp, correo, tema, cita, contactarAntes, lang }) {
+export async function guardarAgendaDiagnostico({ nombre, whatsapp, correo, tema, canal = 'whatsapp', cita, contactarAntes, lang }) {
   const fila = {
     nombre: nombre.trim(),
     whatsapp: whatsapp.replace(/[^\d+]/g, ''),
     correo: correo.trim().toLowerCase(),
     tema,
+    canal_contacto: canal,
     cita: cita.toISOString(),
     contactar_antes: contactarAntes.toISOString(),
     pagina: typeof window !== 'undefined' ? window.location.pathname : null,

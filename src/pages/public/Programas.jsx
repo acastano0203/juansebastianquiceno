@@ -3,12 +3,12 @@ import { useI18n } from '../../i18n/LanguageContext';
 import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { Apple, Coffee, Shirt, Tractor } from 'lucide-react';
 import { ArrowRight } from '../../components/ui/Icons';
-import { RUTAS_ACADEMIA } from '../../config/academia';
-import { ENLACE_AGENDA } from '../../lib/contacto';
+import { RUTA_CURSO_CAFE } from '../../config/cursoCafe';
+import { ANCLA_AGENDA } from '../../lib/contacto';
 
 // Los íconos del original (taza, tractor, chaleco, manzana) y adónde lleva cada programa.
-// El de café va a la Academia, que es ese mismo curso; los demás no tienen página: se agenda una sesión.
-const PROGRAMAS = [{ Icono: Coffee, ruta: RUTAS_ACADEMIA.inicio }, { Icono: Tractor }, { Icono: Shirt }, { Icono: Apple }];
+// El de café va a su landing de venta; los demás no tienen página: se agenda una sesión.
+const PROGRAMAS = [{ Icono: Coffee, ruta: RUTA_CURSO_CAFE }, { Icono: Tractor }, { Icono: Shirt }, { Icono: Apple }];
 
 const claseEnlace = 'inline-flex min-h-11 items-center gap-2 font-semibold text-clay no-underline hover:text-clay-dark';
 
@@ -31,7 +31,7 @@ function Tarjeta({ programa, i }) {
             <ArrowRight size={16} />
           </Link>
         ) : (
-          <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className={claseEnlace}>
+          <a href={ANCLA_AGENDA} className={claseEnlace}>
             {t('programas.agendar')}
             <ArrowRight size={16} />
           </a>

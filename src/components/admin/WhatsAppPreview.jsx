@@ -62,7 +62,7 @@ export function WhatsAppPhone({ lead }) {
           <span className="flex flex-col rounded-[10px] bg-mist px-2.5 py-2 text-ink">
             <strong className="font-semibold">{fechaLarga(cita)}</strong>
             <span>{hora(cita)} (hora de Colombia)</span>
-            <span>30 minutos · Google Meet</span>
+            <span>30 minutos · Videollamada</span>
           </span>
           <span>Para aprovechar el tiempo, ten a mano {area.preparar}</span>
         </Bubble>
@@ -79,7 +79,7 @@ export function WhatsAppPhone({ lead }) {
           <span>
             {first}, te recuerdo nuestra llamada de mañana, <strong className="font-semibold">{fechaLarga(cita).toLowerCase()} a las {hora(cita)}</strong>
           </span>
-          <span>Enlace: [enlace de Google Meet]</span>
+          <span>Enlace: [enlace de la videollamada]</span>
           <span>Si algo cambia, responde este mensaje y te comparto otros horarios.</span>
         </Bubble>
         <QuickReplies items={['Ahí estaré', 'Reprogramar']} />

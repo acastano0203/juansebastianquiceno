@@ -9,6 +9,8 @@ import Criterios from './pages/public/Criterios';
 import Programas from './pages/public/Programas';
 import VideosPodcast from './pages/public/VideosPodcast';
 import Sedes from './pages/public/Sedes';
+import CursoCafe from './pages/public/CursoCafe';
+import { RUTA_CURSO_CAFE } from './config/cursoCafe';
 import CubicajePublico from './pages/public/Cubicaje';
 import Academia from './pages/public/academia/Academia';
 import AcademiaMasterclass from './pages/public/academia/Masterclass';
@@ -42,6 +44,9 @@ export default function App() {
       <Route path="/programas" element={<Programas />} />
       <Route path="/videos-podcast" element={<VideosPodcast />} />
       <Route path="/sedes" element={<Sedes />} />
+      <Route path={RUTA_CURSO_CAFE} element={<CursoCafe />} />
+      {/* Misma dirección que tenía en el sitio anterior, para no romper enlaces ni anuncios existentes */}
+      <Route path="/presentacion-del-curso" element={<Navigate to={RUTA_CURSO_CAFE} replace />} />
       <Route path="/simulador" element={<Simulador />} />
       <Route path="/diagnostico" element={<Navigate to="/simulador" replace />} />
       <Route path="/cubicaje" element={<CubicajePublico />} />

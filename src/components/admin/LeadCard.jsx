@@ -29,9 +29,10 @@ function PlazoContacto({ lead }) {
   if (lead.stage !== 0 || !lead.contactarAntes) return null;
   const vencido = new Date(lead.contactarAntes) < new Date();
   const h = fechaCorta(lead.contactarAntes, lang) + ' ' + hora(lead.contactarAntes, lang);
+  const canal = lead.canalContacto === 'llamada' ? 'llamada' : 'whatsapp';
   return (
     <span className={'rounded-full px-2.5 py-1 text-xs font-semibold ' + (vencido ? 'bg-[#FBE4E2] text-[#8C1D18]' : 'bg-ink text-gold')}>
-      {t(vencido ? 'card.contactoVencido' : 'card.contactarAntes', { h })}
+      {t(vencido ? `card.contactoVencido.${canal}` : `card.contactarAntes.${canal}`, { h })}
     </span>
   );
 }

@@ -103,7 +103,7 @@ export default function Masterclass() {
     <div className="relative min-h-screen min-w-0 overflow-hidden bg-ink text-white">
       <Curvas />
       <div className="relative mx-auto max-w-[1200px] px-5 md:px-20">
-        <AcademiaHeader minimo />
+        <AcademiaHeader />
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4">
           <Link to={RUTAS_ACADEMIA.inicio} className="inline-flex min-h-11 items-center gap-1.5 text-sm text-sage no-underline hover:text-white">
             <ChevronLeft size={16} />

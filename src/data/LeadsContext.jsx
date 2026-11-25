@@ -177,7 +177,7 @@ export function LeadsProvider({ children }) {
   // Sesión diagnóstica agendada desde el pie de las páginas. Si el WhatsApp ya es un prospecto, se le asigna la cita;
   // si no, se crea en «Nuevo». contactarAntes: hasta cuándo se prometió el primer contacto (lo muestra la tarjeta).
   const registrarAgenda = useCallback(
-    ({ nombre, whatsapp, correo, tema, cita, contactarAntes }) => {
+    ({ nombre, whatsapp, correo, tema, canal = 'whatsapp', cita, contactarAntes }) => {
       const now = new Date().toISOString();
       const d = digitos(whatsapp);
       const previo = d.length >= 7 && leads.find((x) => digitos(x.whatsapp) === d);
@@ -195,6 +195,7 @@ export function LeadsProvider({ children }) {
                   correo: correo || l.correo,
                   answers: { ...l.answers, area: l.answers?.area || tema },
                   contactarAntes: contactarAntes.toISOString(),
+                  canalContacto: canal,
                   contactado: false,
                   nuevo: true,
                   activity: [...(l.activity || []), ...actividad],
@@ -226,6 +227,7 @@ export function LeadsProvider({ children }) {
         propuesta: null,
         nuevo: true,
         contactarAntes: contactarAntes.toISOString(),
+        canalContacto: canal,
         contactado: false,
         activity: actividad,
       };

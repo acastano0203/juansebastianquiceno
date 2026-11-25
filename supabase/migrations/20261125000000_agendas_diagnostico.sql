@@ -8,6 +8,8 @@ create table if not exists agendas_diagnostico (
   whatsapp text not null check (whatsapp ~ '^\+?[0-9]{9,15}$'),
   correo text not null check (correo ~ '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
   tema text not null check (tema in ('comex', 'estrategia', 'inversion', 'formacion')),
+  -- Cómo prefiere el cliente que soporte lo contacte para confirmar la sesión
+  canal_contacto text not null default 'whatsapp' check (canal_contacto in ('whatsapp', 'llamada')),
   cita timestamptz not null,
   -- Hasta cuándo se prometió el primer contacto (15–20 min en horario de atención)
   contactar_antes timestamptz not null,

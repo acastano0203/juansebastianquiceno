@@ -1,11 +1,10 @@
 import { useId, useMemo, useState } from 'react';
-import { CalendarCheck, Clock, LoaderCircle, MessageCircle, Video } from 'lucide-react';
+import { CalendarCheck, Clock, LoaderCircle, MessageCircle, Phone, Video } from 'lucide-react';
 import { useI18n } from '../../i18n/LanguageContext';
 import { useLeads } from '../../data/LeadsContext';
 import { getArea } from '../../data/catalog';
 import { ATENCION, HORAS_SESION, MINUTOS_RESPUESTA, TEMAS, diasDisponibles, enHorarioDeAtencion, instanteBogota, proximoDiaHabil } from '../../config/agenda';
 import { guardarAgendaDiagnostico } from '../../services/agendaDiagnostico';
-import { ENLACE_AGENDA } from '../../lib/contacto';
 import { Campo, entrada } from '../academia/ModalAgendar';
 import RootLines from '../ui/RootLines';
 import { classes } from '../ui/Button';
@@ -34,6 +33,7 @@ function Formulario() {
   const [tema, setTema] = useState(TEMAS[0]);
   const [dia, setDia] = useState(0);
   const [hora, setHora] = useState(1);
+  const [canal, setCanal] = useState('whatsapp'); // whatsapp | llamada: cómo quiere que lo contacte soporte
   const [nombre, setNombre] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [correo, setCorreo] = useState('');
@@ -62,7 +62,7 @@ function Formulario() {
     // Fuera de horario la promesa es el siguiente día hábil a primera hora (+ el mismo plazo)
     const base = enHorario ? ahora : instanteBogota(proximoDiaHabil(ahora), `${ATENCION.desde}:00`);
     const contactarAntes = new Date(base.getTime() + MINUTOS_RESPUESTA * 60 * 1000);
-    const datos = { nombre, whatsapp, correo, tema, cita, contactarAntes, lang };
+    const datos = { nombre, whatsapp, correo, tema, canal, cita, contactarAntes, lang };
     try {
       await guardarAgendaDiagnostico(datos);
     } catch {
@@ -70,7 +70,7 @@ function Formulario() {
       return;
     }
     registrarAgenda(datos);
-    setConfirmacion({ nombre: nombre.trim().split(' ')[0], correo: correo.trim(), resumen, enHorario, diaContacto: fmtDia(proximoDiaHabil(ahora), { weekday: 'long', day: 'numeric', month: 'long' }) });
+    setConfirmacion({ nombre: nombre.trim().split(' ')[0], correo: correo.trim(), canal, resumen, enHorario, diaContacto: fmtDia(proximoDiaHabil(ahora), { weekday: 'long', day: 'numeric', month: 'long' }) });
     setEstado('listo');
   };
 
@@ -87,8 +87,8 @@ function Formulario() {
           <span className="first-letter:uppercase">{t('agenda.listoCuando', { resumen: c.resumen })}</span>
         </p>
         <p className="m-0 flex gap-2.5 rounded-2xl bg-mist p-4 text-[15px] leading-[1.55] text-ink">
-          <MessageCircle size={20} className="mt-0.5 flex-none text-clay" aria-hidden="true" />
-          <span>{c.enHorario ? t('agenda.listoPromesa', { correo: c.correo }) : t('agenda.listoFuera', { correo: c.correo, dia: c.diaContacto })}</span>
+          {c.canal === 'llamada' ? <Phone size={20} className="mt-0.5 flex-none text-clay" aria-hidden="true" /> : <MessageCircle size={20} className="mt-0.5 flex-none text-clay" aria-hidden="true" />}
+          <span>{c.enHorario ? t(`agenda.listoPromesa.${c.canal}`, { correo: c.correo }) : t(`agenda.listoFuera.${c.canal}`, { correo: c.correo, dia: c.diaContacto })}</span>
         </p>
         <button
           type="button"
@@ -155,11 +155,26 @@ function Formulario() {
         </div>
       </fieldset>
 
+      <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
+        <legend className="pb-2 text-sm font-semibold">{t('agenda.canal')}</legend>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            ['whatsapp', MessageCircle],
+            ['llamada', Phone],
+          ].map(([x, Icono]) => (
+            <button key={x} type="button" aria-pressed={canal === x} onClick={() => setCanal(x)} className={chip(canal === x) + ' inline-flex items-center justify-center gap-2'}>
+              <Icono size={17} aria-hidden="true" />
+              {t(`agenda.canales.${x}`)}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
       <div className="flex flex-wrap gap-3">
         <Campo id={`${id}-nombre`} label={t('agenda.nombre')} error={errores.nombre}>
           <input id={`${id}-nombre`} type="text" autoComplete="name" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder={t('agenda.nombrePh')} aria-invalid={!!errores.nombre} aria-describedby={errores.nombre ? `${id}-nombre-e` : undefined} className={entrada(errores.nombre)} />
         </Campo>
-        <Campo id={`${id}-whatsapp`} label={t('agenda.whatsapp')} error={errores.whatsapp}>
+        <Campo id={`${id}-whatsapp`} label={t(canal === 'llamada' ? 'agenda.telefono' : 'agenda.whatsapp')} error={errores.whatsapp}>
           <input id={`${id}-whatsapp`} type="tel" autoComplete="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder={t('agenda.whatsappPh')} aria-invalid={!!errores.whatsapp} aria-describedby={errores.whatsapp ? `${id}-whatsapp-e` : undefined} className={entrada(errores.whatsapp)} />
         </Campo>
         <Campo id={`${id}-correo`} label={t('agenda.correo')} error={errores.correo} className="flex-[1_1_100%]">
@@ -173,12 +188,9 @@ function Formulario() {
       </div>
 
       {estado === 'error' && (
-        <div role="alert" className="flex flex-col gap-1.5 rounded-xl border border-[#B3261E]/30 bg-[#FFF7F6] p-3.5 text-sm text-[#8C1D18]">
-          <span>{t('agenda.err.envio')}</span>
-          <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className="font-semibold text-[#8C1D18] underline">
-            {t('agenda.err.alterno')}
-          </a>
-        </div>
+        <p role="alert" className="m-0 rounded-xl border border-[#B3261E]/30 bg-[#FFF7F6] p-3.5 text-sm text-[#8C1D18]">
+          {t('agenda.err.envio')}
+        </p>
       )}
 
       <div className="flex flex-col gap-2">
@@ -194,35 +206,14 @@ function Formulario() {
   );
 }
 
-// Foto con dos tarjetas flotantes, en el estilo del proyecto
+// Foto del asesor, en el estilo del proyecto
 function Retrato() {
   const { t } = useI18n();
   return (
-    <div className="relative mx-auto mt-2 w-full max-w-[360px] pb-10 lg:mx-0">
+    <div className="relative mx-auto mt-2 w-full max-w-[360px] lg:mx-0">
       <div className="absolute -top-4 -left-4 size-[200px] rounded-[0_120px_0_120px] bg-ink-2" aria-hidden="true" />
       <div className="relative overflow-hidden rounded-[32px_96px_32px_6px] border-2 border-gold/40 shadow-[0_30px_60px_rgba(0,0,0,.35)]">
         <img src={foto} alt={t('agenda.fotoAlt')} className="block aspect-[4/5] w-full object-cover object-top" loading="lazy" />
-      </div>
-      <div className="absolute -right-2 bottom-16 flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 text-ink shadow-[0_15px_35px_rgba(0,0,0,.3)] md:-right-10">
-        <span className="grid size-9 place-items-center rounded-xl bg-sage/40 text-ink">
-          <Video size={18} aria-hidden="true" />
-        </span>
-        <span className="flex flex-col">
-          <strong className="font-serif text-[14px]">{t('agenda.meet')}</strong>
-          <span className="text-[12px] text-muted">{t('agenda.meetSub')}</span>
-        </span>
-      </div>
-      <div className="absolute bottom-0 -left-2 flex items-center gap-3 rounded-2xl bg-white px-3.5 py-2.5 text-ink shadow-[0_15px_35px_rgba(0,0,0,.3)] md:-left-8">
-        <span className="grid size-9 place-items-center rounded-xl bg-gold/25 text-clay">
-          <MessageCircle size={18} aria-hidden="true" />
-        </span>
-        <span className="flex flex-col">
-          <strong className="flex items-center gap-1.5 font-serif text-[14px]">
-            {t('agenda.respuesta')}
-            <span className="size-2 animate-pulse rounded-full bg-[#2E9E5B]" aria-hidden="true" />
-          </strong>
-          <span className="text-[12px] text-muted">{t('agenda.respuestaSub')}</span>
-        </span>
       </div>
     </div>
   );

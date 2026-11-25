@@ -1,5 +1,5 @@
 import { useI18n } from '../../i18n/LanguageContext';
-import { ENLACE_AGENDA } from '../../lib/contacto';
+import { ANCLA_AGENDA } from '../../lib/contacto';
 import RootLines from '../ui/RootLines';
 import { ButtonLink, classes } from '../ui/Button';
 import { ArrowRight } from '../ui/Icons';
@@ -48,7 +48,7 @@ export default function HeroConsultoria() {
             </h1>
             <p className="m-0 max-w-[600px] text-base leading-[1.55] text-pale md:text-[19px]">{t('inicio.lead')}</p>
             <div className="mt-1 flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
-              <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className={classes({ variant: 'gold', size: 'lg', lift: true })}>
+              <a href={ANCLA_AGENDA} className={classes({ variant: 'gold', size: 'lg', lift: true })}>
                 {t('inicio.ctaDiag')}
                 <ArrowRight />
               </a>

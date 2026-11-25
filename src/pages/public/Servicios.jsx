@@ -3,7 +3,7 @@ import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { ButtonLink } from '../../components/ui/Button';
 import { Boxes, Globe, SquareArrowOutUpRight, TrendingUp } from 'lucide-react';
 import { ArrowRight } from '../../components/ui/Icons';
-import { ENLACE_AGENDA } from '../../lib/contacto';
+import { ANCLA_AGENDA } from '../../lib/contacto';
 
 // Los mismos 4 íconos del sitio original (expansión, finanzas, logística global, GTM), con su color de fondo
 const ICONOS = [
@@ -44,9 +44,7 @@ function Tarjeta({ servicio, i }) {
       </div>
       <div className="border-t border-line pt-4">
         <a
-          href={ENLACE_AGENDA}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={ANCLA_AGENDA}
           className="inline-flex min-h-11 items-center gap-2 font-semibold text-clay no-underline hover:text-clay-dark"
         >
           {t('servicios.agendar')}

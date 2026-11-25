@@ -2,7 +2,7 @@ import { useI18n } from '../../i18n/LanguageContext';
 import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { classes } from '../../components/ui/Button';
 import { ArrowRight, Check } from '../../components/ui/Icons';
-import { ENLACE_AGENDA } from '../../lib/contacto';
+import { ANCLA_AGENDA } from '../../lib/contacto';
 import foto from '../../assets/juan-sebastian-quiceno-escritorio.jpg';
 
 // vCard propia (public/). El enlace anterior en mitarjetavirtual.com murió: el dominio expiró.
@@ -43,7 +43,7 @@ export default function SobreMi() {
             ))}
           </ul>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <a href={ENLACE_AGENDA} target="_blank" rel="noopener noreferrer" className={classes({ variant: 'gold', size: 'lg', lift: true })}>
+            <a href={ANCLA_AGENDA} className={classes({ variant: 'gold', size: 'lg', lift: true })}>
               {t('sobre.ctaTalk')}
               <ArrowRight />
             </a>
