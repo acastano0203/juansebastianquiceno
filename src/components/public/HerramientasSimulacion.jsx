@@ -8,6 +8,7 @@ import BotonWhatsApp from '../simulador/BotonWhatsApp';
 import { enlaceWhatsApp } from '../../lib/contacto';
 import { ButtonLink } from '../ui/Button';
 import { Alert, ArrowRight, Board, Chart, Doc } from '../ui/Icons';
+import { AparecerImagen, Elemento, Grupo } from '../ui/Aparecer';
 
 // Antes era el hero de la portada. Ahora va debajo del hero de consultoría (HeroConsultoria) y explica
 // las herramientas: es el paso "antes de la sesión, calcula tu operación". Fondo claro y h2 para no competir.
@@ -25,7 +26,7 @@ function TarjetaEjemplo() {
     [t('sim.cos.totalParcial'), formatoDinero(r.rentabilidad.total, 'USD', lang)],
   ];
   return (
-    <div className="relative hidden justify-center lg:flex" aria-hidden="true">
+    <AparecerImagen retraso={0.15} className="relative hidden justify-center lg:flex" aria-hidden="true">
       <div className="absolute -top-7 -right-2.5 size-[300px] rounded-[0_160px_0_160px] bg-sage/45" />
       <div className="relative flex w-full max-w-[420px] flex-col gap-4 rounded-[32px_32px_32px_6px] border border-line bg-white p-7 shadow-[0_30px_60px_rgba(4,20,21,.14)]">
         <div className="flex items-center justify-between text-[13px] text-muted">
@@ -48,7 +49,7 @@ function TarjetaEjemplo() {
         </dl>
         <span className="text-[13px] text-muted italic">{t('hero.cardNota')}</span>
       </div>
-    </div>
+    </AparecerImagen>
   );
 }
 
@@ -56,17 +57,17 @@ function Beneficios() {
   const { t } = useI18n();
   const iconos = [Chart, Board, Alert, Doc];
   return (
-    <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
+    <Grupo as="ul" pausa={0.08} className="m-0 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
       {t('hero.beneficios').map((b, i) => {
         const Icono = iconos[i];
         return (
-          <li key={b} className="flex flex-col gap-3 rounded-[20px] border border-line bg-white p-5 text-ink">
+          <Elemento as="li" key={b} className="flex flex-col gap-3 rounded-[20px] border border-line bg-white p-5 text-ink">
             <Icono size={22} className="text-clay" />
             <span className="text-[15px] leading-[1.3] font-semibold">{b}</span>
-          </li>
+          </Elemento>
         );
       })}
-    </ul>
+    </Grupo>
   );
 }
 
@@ -76,15 +77,15 @@ export default function HerramientasSimulacion() {
     <section id="herramientas" className="bg-mist">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-12 px-[22px] py-14 md:px-10 md:py-20">
         <div className="grid items-center gap-[56px] lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <div className="flex min-w-0 flex-col gap-[22px] md:gap-6">
-            <span className="text-[11px] font-medium tracking-[0.12em] text-clay uppercase md:text-[13px] md:tracking-[0.14em]">{t('hero.eyebrow')}</span>
-            <h2 className="m-0 font-serif text-[32px] leading-[1.08] font-semibold tracking-[-0.015em] text-balance md:text-[46px]">
+          <Grupo className="flex min-w-0 flex-col gap-[22px] md:gap-6">
+            <Elemento as="span" className="text-[11px] font-medium tracking-[0.12em] text-clay uppercase md:text-[13px] md:tracking-[0.14em]">{t('hero.eyebrow')}</Elemento>
+            <Elemento as="h2" className="m-0 font-serif text-[32px] leading-[1.08] font-semibold tracking-[-0.015em] text-balance md:text-[46px]">
               {t('hero.title1')}
               <em className="font-normal text-clay italic">{t('hero.titleEm')}</em>
               {t('hero.title2')}
-            </h2>
-            <p className="m-0 max-w-[600px] text-base leading-[1.55] text-muted md:text-[18px]">{t('hero.lead')}</p>
-            <div className="mt-1 flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
+            </Elemento>
+            <Elemento as="p" className="m-0 max-w-[600px] text-base leading-[1.55] text-muted md:text-[18px]">{t('hero.lead')}</Elemento>
+            <Elemento className="mt-1 flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
               <ButtonLink to="/simulador" variant="gold" size="lg" lift>
                 {t('hero.ctaSimular')}
                 <ArrowRight />
@@ -95,9 +96,9 @@ export default function HerramientasSimulacion() {
               <BotonWhatsApp variant="outline-ink" mensaje={t('sim.res.msgAsesor')}>
                 {t('hero.ctaAsesor')}
               </BotonWhatsApp>
-            </div>
+            </Elemento>
             {!enlaceWhatsApp('x') && <span className="text-[13px] text-muted">{t('sim.res.asesorInactivo')}</span>}
-          </div>
+          </Grupo>
           <TarjetaEjemplo />
         </div>
 

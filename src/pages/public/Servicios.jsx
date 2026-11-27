@@ -19,8 +19,9 @@ function Tarjeta({ servicio, i }) {
   const destacado = i === ICONOS.length - 1;
   return (
     <article
+      id={`servicio-${i + 1}`}
       className={
-        'flex flex-col justify-between gap-6 rounded-[24px_24px_24px_6px] border bg-white p-6 transition-transform duration-200 hover:-translate-y-1 md:p-7 ' +
+        'flex scroll-mt-6 flex-col justify-between gap-6 rounded-[24px_24px_24px_6px] border bg-white p-6 transition-transform duration-200 hover:-translate-y-1 md:p-7 ' +
         (destacado ? 'border-gold/50 shadow-[0_18px_40px_rgba(221,189,98,.18)]' : 'border-line shadow-[0_18px_40px_rgba(4,20,21,.08)]')
       }
     >

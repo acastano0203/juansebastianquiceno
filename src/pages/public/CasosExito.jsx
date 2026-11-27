@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useI18n } from '../../i18n/LanguageContext';
 import PaginaSeccion from '../../components/public/PaginaSeccion';
 import { ButtonLink, classes } from '../../components/ui/Button';
@@ -102,8 +103,14 @@ function Caso({ caso, foto }) {
 export default function CasosExito() {
   const { t } = useI18n();
   const casos = t('casos.lista');
-  const [activo, setActivo] = useState(0);
+  // ?caso=N (desde el pie) abre directamente ese caso
+  const [params] = useSearchParams();
+  const pedido = Number(params.get('caso')) - 1;
+  const [activo, setActivo] = useState(pedido >= 0 && pedido < casos.length ? pedido : 0);
   const ir = (i) => setActivo((i + casos.length) % casos.length);
+  useEffect(() => {
+    if (pedido >= 0 && pedido < casos.length) setActivo(pedido);
+  }, [pedido, casos.length]);
 
   return (
     <PaginaSeccion>
@@ -114,7 +121,7 @@ export default function CasosExito() {
           <p className="m-0 text-base leading-[1.6] text-muted md:text-[17px]">{t('casos.intro')}</p>
         </header>
 
-        <div className="flex flex-col gap-4">
+        <div id="casos-lista" className="flex scroll-mt-6 flex-col gap-4">
           <p className="m-0 text-center text-[13px] text-muted md:hidden">{t('casos.hint')}</p>
           <Pestanas casos={casos} activo={activo} onCambiar={ir} />
         </div>

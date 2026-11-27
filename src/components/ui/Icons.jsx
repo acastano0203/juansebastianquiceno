@@ -27,8 +27,8 @@ import {
   Trash2,
   TriangleAlert,
   Video as LVideo,
-  X,
-} from 'lucide-react';
+  UsersRound,
+  X, GraduationCap as LGraduationCap } from 'lucide-react';
 
 // Envoltorio común: decorativo por defecto (aria-hidden) y con el tamaño/trazo del diseño
 function icono(Componente, trazo = 2) {
@@ -44,6 +44,7 @@ export const Check = icono(LCheck, 2.6);
 export const Menu = icono(LMenu);
 export const Close = icono(X);
 export const Board = icono(Container, 1.8);
+export const Graduacion = icono(LGraduationCap, 1.8);
 export const Doc = icono(FileText, 1.8);
 export const Pen = icono(PenLine, 1.8);
 export const Chart = icono(ChartLine, 1.8);
@@ -65,3 +66,4 @@ export const Lock = icono(LLock, 1.8);
 export const Plus = icono(LPlus, 2.2);
 export const Trash = icono(Trash2, 1.8);
 export const Copy = icono(LCopy, 1.8);
+export const Usuarios = icono(UsersRound, 1.8);

@@ -9,6 +9,7 @@ import { Campo, entrada } from '../academia/ModalAgendar';
 import RootLines from '../ui/RootLines';
 import { classes } from '../ui/Button';
 import { ArrowRight, Check } from '../ui/Icons';
+import { AparecerImagen, Elemento, Grupo } from '../ui/Aparecer';
 import foto from '../../assets/juan-sebastian-quiceno-agendar.jpg';
 
 const locale = (lang) => (lang === 'en' ? 'en-US' : 'es-CO');
@@ -227,16 +228,16 @@ export default function AgendaDiagnostico() {
     <section id="agendar-sesion" aria-labelledby="agenda-titulo" className="relative overflow-clip bg-ink text-white">
       <RootLines variant="hero" opacity={0.14} className="-bottom-24 -left-24 hidden md:block" />
       <div className="relative mx-auto grid max-w-[1240px] items-start gap-12 px-[22px] py-16 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-16">
-        <div className="flex min-w-0 flex-col gap-6">
-          <span className="inline-flex items-center gap-2 self-start rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] text-gold uppercase">
+        <Grupo className="flex min-w-0 flex-col gap-6">
+          <Elemento as="span" className="inline-flex items-center gap-2 self-start rounded-full border border-gold/40 bg-gold/10 px-3.5 py-1.5 text-[11px] font-bold tracking-[0.12em] text-gold uppercase">
             <Video size={14} aria-hidden="true" />
             {t('agenda.badge')}
-          </span>
-          <h2 id="agenda-titulo" className="m-0 font-serif text-[32px] leading-[1.1] font-semibold text-balance md:text-[44px]">
+          </Elemento>
+          <Elemento as="h2" id="agenda-titulo" className="m-0 font-serif text-[32px] leading-[1.1] font-semibold text-balance md:text-[44px]">
             {t('agenda.titulo')}
-          </h2>
-          <p className="m-0 max-w-[560px] text-base leading-[1.6] text-pale md:text-[17px]">{t('agenda.lead')}</p>
-          <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
+          </Elemento>
+          <Elemento as="p" className="m-0 max-w-[560px] text-base leading-[1.6] text-pale md:text-[17px]">{t('agenda.lead')}</Elemento>
+          <Elemento as="ul" className="m-0 flex list-none flex-col gap-3.5 p-0">
             {t('agenda.puntos').map((p) => (
               <li key={p.b} className="flex gap-3 text-[15px] leading-[1.5] text-pale">
                 <span className="mt-0.5 grid size-6 flex-none place-items-center rounded-full bg-gold text-ink">
@@ -248,15 +249,15 @@ export default function AgendaDiagnostico() {
                 </span>
               </li>
             ))}
-          </ul>
-          <p className="m-0 text-[13px] text-sage">{t('agenda.horario', { desde: h(ATENCION.desde), hasta: h(ATENCION.hasta) })}</p>
-          <div className="hidden lg:block">
+          </Elemento>
+          <Elemento as="p" className="m-0 text-[13px] text-sage">{t('agenda.horario', { desde: h(ATENCION.desde), hasta: h(ATENCION.hasta) })}</Elemento>
+          <Elemento className="hidden lg:block">
             <Retrato />
-          </div>
-        </div>
-        <div className="rounded-[28px_28px_28px_6px] bg-white p-5 text-ink shadow-[0_30px_70px_rgba(0,0,0,.35)] md:p-8 lg:sticky lg:top-6">
+          </Elemento>
+        </Grupo>
+        <AparecerImagen retraso={0.15} className="rounded-[28px_28px_28px_6px] bg-white p-5 text-ink shadow-[0_30px_70px_rgba(0,0,0,.35)] md:p-8 lg:sticky lg:top-6">
           <Formulario />
-        </div>
+        </AparecerImagen>
       </div>
     </section>
   );

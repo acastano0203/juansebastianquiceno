@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { BadgeCheck, BookOpen, CircleAlert, Clock, Coffee, Gift, Lock, MessageCircle, Play, Scale, ShieldCheck, Store, Users } from 'lucide-react';
 import { useI18n } from '../../i18n/LanguageContext';
 import { CURSO_CAFE } from '../../config/cursoCafe';
 import { registrarOrigen } from '../../services/academia';
+import { pagoDisponible } from '../../services/pagoCurso';
+import ModalInscripcionCurso from '../../components/public/ModalInscripcionCurso';
 import { Curvas, Revelar, useArriba } from '../../components/academia/comun';
 import ReproductorYouTube from '../../components/public/ReproductorYouTube';
 import SiteHeader from '../../components/public/SiteHeader';
@@ -38,9 +40,24 @@ function useFecha(iso) {
   return new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'es-CO', { day: 'numeric', month: 'long' }).format(new Date(a, m - 1, d));
 }
 
-/** Botón de compra: Hotmart si ya hay enlace; si no, WhatsApp con el mensaje de inscripción. */
+// Abre el formulario de inscripción (paso previo a Stripe) desde cualquier botón de compra de la página
+const Compra = createContext(null);
+
+/**
+ * Botón de compra. Con pagos activos (Supabase + Stripe configurados): abre el formulario de inscripción.
+ * Si no: Hotmart si hay enlace; si tampoco, WhatsApp con el mensaje de inscripción.
+ */
 function BotonComprar({ children, variant = 'gold', size = 'lg', className = '' }) {
   const { t } = useI18n();
+  const abrir = useContext(Compra);
+  if (pagoDisponible) {
+    return (
+      <button type="button" onClick={abrir} className={classes({ variant, size, lift: true, className })}>
+        {children}
+        <ArrowRight />
+      </button>
+    );
+  }
   const href = CURSO_CAFE.checkout || wa(t('curso.msgInscripcion'));
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className={classes({ variant, size, lift: true, className })}>
@@ -374,13 +391,18 @@ function Testimonios({ onVideo }) {
   );
 }
 
-function Oferta() {
+function Oferta({ cancelado }) {
   const { t } = useI18n();
   const o = t('curso.oferta');
   const fecha = useFecha(CURSO_CAFE.validoHasta);
   return (
     <section id="oferta" className="scroll-mt-4 bg-ink-2 px-[22px] py-16 md:px-10 md:py-24">
       <Revelar className="mx-auto flex max-w-[620px] flex-col gap-6 rounded-[32px_32px_32px_8px] bg-white p-6 text-center text-ink shadow-[0_30px_70px_rgba(0,0,0,.3)] md:p-10">
+        {cancelado && (
+          <p role="status" className="m-0 rounded-xl bg-clay-bg px-4 py-3 text-left text-sm text-clay-ink">
+            {t('curso.cancelado')}
+          </p>
+        )}
         <div className="flex flex-col gap-2">
           <Eyebrow>{fecha ? t('curso.oferta.eyebrowHasta', { fecha }) : o.eyebrow}</Eyebrow>
           <h2 className="m-0 font-serif text-[30px] leading-[1.1] font-semibold md:text-[38px]">{o.titulo}</h2>
@@ -554,6 +576,10 @@ function BarraMovil() {
 
 export default function CursoCafe() {
   useArriba();
+  const [modal, setModal] = useState(false);
+  // Stripe devuelve aquí con ?pago=cancelado si la persona cerró el pago sin terminar
+  const [params] = useSearchParams();
+  const cancelado = params.get('pago') === 'cancelado';
   useEffect(() => {
     registrarOrigen();
   }, []);
@@ -564,6 +590,7 @@ export default function CursoCafe() {
     seccion?.querySelector('button')?.click();
   };
   return (
+    <Compra.Provider value={() => setModal(true)}>
     <div className="min-w-0 bg-white text-ink">
       <Hero />
       <Cifras />
@@ -573,12 +600,14 @@ export default function CursoCafe() {
       <ParaTi />
       <Instructor />
       <Testimonios onVideo={verTestimonio} />
-      <Oferta />
+      <Oferta cancelado={cancelado} />
       <Garantia />
       <Preguntas />
       <Cierre />
       <Pie />
       <BarraMovil />
+      {modal && <ModalInscripcionCurso onCerrar={() => setModal(false)} />}
     </div>
+    </Compra.Provider>
   );
 }

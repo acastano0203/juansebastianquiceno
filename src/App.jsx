@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useProximoLead } from './data/LeadsContext';
+import ScrollAlNavegar from './components/ui/ScrollAlNavegar';
 import Landing from './pages/public/Landing';
 import Simulador from './pages/public/Simulador';
 import SobreMi from './pages/public/SobreMi';
@@ -10,6 +11,8 @@ import Programas from './pages/public/Programas';
 import VideosPodcast from './pages/public/VideosPodcast';
 import Sedes from './pages/public/Sedes';
 import CursoCafe from './pages/public/CursoCafe';
+import CursoCafeGracias from './pages/public/CursoCafeGracias';
+import Inscripciones from './pages/admin/Inscripciones';
 import { RUTA_CURSO_CAFE } from './config/cursoCafe';
 import CubicajePublico from './pages/public/Cubicaje';
 import Academia from './pages/public/academia/Academia';
@@ -17,7 +20,8 @@ import AcademiaMasterclass from './pages/public/academia/Masterclass';
 import AcademiaGracias from './pages/public/academia/Gracias';
 import AcademiaInscripcion from './pages/public/academia/Inscripcion';
 import Login from './pages/admin/Login';
-import AdminLayout from './components/admin/AdminLayout';
+import AdminLayout, { Permiso } from './components/admin/AdminLayout';
+import Usuarios from './pages/admin/Usuarios';
 import Pipeline from './pages/admin/Pipeline';
 import Brief from './pages/admin/Brief';
 import Propuesta from './pages/admin/Propuesta';
@@ -35,6 +39,8 @@ function ProximoLead({ to }) {
 
 export default function App() {
   return (
+    <>
+      <ScrollAlNavegar />
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/sobre-mi" element={<SobreMi />} />
@@ -45,6 +51,7 @@ export default function App() {
       <Route path="/videos-podcast" element={<VideosPodcast />} />
       <Route path="/sedes" element={<Sedes />} />
       <Route path={RUTA_CURSO_CAFE} element={<CursoCafe />} />
+      <Route path={`${RUTA_CURSO_CAFE}/gracias`} element={<CursoCafeGracias />} />
       {/* Misma dirección que tenía en el sitio anterior, para no romper enlaces ni anuncios existentes */}
       <Route path="/presentacion-del-curso" element={<Navigate to={RUTA_CURSO_CAFE} replace />} />
       <Route path="/simulador" element={<Simulador />} />
@@ -56,19 +63,23 @@ export default function App() {
       <Route path="/academia/inscripcion" element={<AcademiaInscripcion />} />
       <Route path="/admin/login" element={<Login />} />
       <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Pipeline />} />
-        <Route path="prospectos/:id" element={<Brief />} />
-        <Route path="briefs" element={<ProximoLead to="/admin/prospectos" />} />
-        <Route path="propuestas" element={<ProximoLead to="/admin/propuestas" />} />
-        <Route path="propuestas/:id" element={<Propuesta />} />
-        <Route path="resultados" element={<Resultados />} />
-        <Route path="cubicaje" element={<DashboardCubicaje />} />
-        <Route path="cubicaje/lista" element={<ListaCubicajes />} />
-        <Route path="cubicaje/nuevo" element={<EditarCubicaje key="nuevo" />} />
-        <Route path="cubicaje/:id" element={<DetalleCubicaje />} />
-        <Route path="cubicaje/:id/editar" element={<EditarCubicaje key="editar" />} />
+        {/* Cada página exige el permiso de su módulo (roles.permisos); sin él, se redirige a la primera permitida */}
+        <Route index element={<Permiso modulo="pipeline"><Pipeline /></Permiso>} />
+        <Route path="prospectos/:id" element={<Permiso modulo="briefs"><Brief /></Permiso>} />
+        <Route path="briefs" element={<Permiso modulo="briefs"><ProximoLead to="/admin/prospectos" /></Permiso>} />
+        <Route path="propuestas" element={<Permiso modulo="propuestas"><ProximoLead to="/admin/propuestas" /></Permiso>} />
+        <Route path="propuestas/:id" element={<Permiso modulo="propuestas"><Propuesta /></Permiso>} />
+        <Route path="resultados" element={<Permiso modulo="resultados"><Resultados /></Permiso>} />
+        <Route path="inscripciones" element={<Permiso modulo="inscripciones"><Inscripciones /></Permiso>} />
+        <Route path="cubicaje" element={<Permiso modulo="cubicaje"><DashboardCubicaje /></Permiso>} />
+        <Route path="cubicaje/lista" element={<Permiso modulo="cubicaje"><ListaCubicajes /></Permiso>} />
+        <Route path="cubicaje/nuevo" element={<Permiso modulo="cubicaje"><EditarCubicaje key="nuevo" /></Permiso>} />
+        <Route path="cubicaje/:id" element={<Permiso modulo="cubicaje"><DetalleCubicaje /></Permiso>} />
+        <Route path="cubicaje/:id/editar" element={<Permiso modulo="cubicaje"><EditarCubicaje key="editar" /></Permiso>} />
+        <Route path="usuarios" element={<Permiso modulo="usuarios"><Usuarios /></Permiso>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }
