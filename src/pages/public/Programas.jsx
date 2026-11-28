@@ -10,13 +10,15 @@ import { ANCLA_AGENDA } from '../../lib/contacto';
 // El de café va a su landing de venta; los demás no tienen página: se agenda una sesión.
 const PROGRAMAS = [{ Icono: Coffee, ruta: RUTA_CURSO_CAFE }, { Icono: Tractor }, { Icono: Shirt }, { Icono: Apple }];
 
-const claseEnlace = 'inline-flex min-h-11 items-center gap-2 font-semibold text-clay no-underline hover:text-clay-dark';
+// El ::after del enlace cubre toda la tarjeta: se hace clic en cualquier parte, no solo en el texto
+const claseEnlace =
+  "inline-flex min-h-11 items-center gap-2 font-semibold text-clay no-underline group-hover:text-clay-dark after:absolute after:inset-0 after:content-['']";
 
 function Tarjeta({ programa, i }) {
   const { t } = useI18n();
   const { Icono, ruta } = PROGRAMAS[i];
   return (
-    <article className="flex flex-col justify-between gap-6 rounded-[24px_24px_24px_6px] border border-line bg-white p-6 shadow-[0_18px_40px_rgba(4,20,21,.07)] transition-transform duration-200 hover:-translate-y-1 md:p-7">
+    <article className="group relative flex cursor-pointer flex-col justify-between gap-6 rounded-[24px_24px_24px_6px] border border-line bg-white p-6 shadow-[0_18px_40px_rgba(4,20,21,.07)] transition-[transform,box-shadow] duration-200 focus-within:ring-2 focus-within:ring-clay hover:-translate-y-1 hover:shadow-[0_24px_48px_rgba(4,20,21,.12)] md:p-7">
       <div className="flex flex-col gap-4">
         <span className="flex size-[52px] items-center justify-center rounded-xl bg-ink text-gold">
           <Icono size={24} strokeWidth={1.8} aria-hidden="true" />

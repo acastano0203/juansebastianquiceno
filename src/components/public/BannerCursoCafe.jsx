@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, ChartLine, CirclePlay, Gift, Package, Play, Quote, ShieldCheck } from 'lucide-react';
+import { BookOpen, BookOpenText, ChartLine, Gift, GraduationCap, Package, Play, Quote, ShieldCheck } from 'lucide-react';
 import { useI18n } from '../../i18n/LanguageContext';
 import { CURSO_CAFE, RUTA_CURSO_CAFE } from '../../config/cursoCafe';
 import ReproductorYouTube from './ReproductorYouTube';
@@ -8,8 +8,7 @@ import RootLines from '../ui/RootLines';
 import { classes } from '../ui/Button';
 import { ArrowRight } from '../ui/Icons';
 import { Aparecer, AparecerImagen, Elemento, Grupo } from '../ui/Aparecer';
-import foto from '../../assets/curso-cafe/juan-sebastian-trilladora.jpg';
-import guia from '../../assets/curso-cafe/guia-mockup.jpg';
+import foto from '../../assets/curso-cafe/video-presentacion.jpg'; // miniatura del Short de presentación
 
 // Banner del curso de café en la portada (sección #curso-cafe-banner del sitio original, mismo color #995837 = clay).
 // El botón lleva a la landing del curso, la misma de la tarjeta en Programas; la tarjeta de la derecha
@@ -21,8 +20,9 @@ function Vitrina() {
   const b = t('curso.banner');
   const [activo, setActivo] = useState(false);
   return (
-    <AparecerImagen retraso={0.15} className="relative mx-auto w-full max-w-[520px] pb-16 sm:pb-12 lg:mr-0 lg:ml-auto">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-[24px_72px_24px_6px] border-2 border-gold/45 bg-ink shadow-[0_30px_60px_rgba(0,0,0,.35)]">
+    <AparecerImagen retraso={0.15} className="relative mx-auto flex w-full max-w-[460px] flex-col lg:mr-0 lg:ml-auto">
+      {/* El video es un Short de YouTube: marco vertical 9:16 para que no salga con franjas negras */}
+      <div className="relative ml-auto aspect-[9/16] w-[72%] max-w-[320px] overflow-hidden rounded-[24px_64px_24px_6px] border-2 border-gold/45 bg-ink shadow-[0_30px_60px_rgba(0,0,0,.35)] sm:w-[68%]">
         {activo ? (
           <ReproductorYouTube
             videoId={CURSO_CAFE.videoVenta}
@@ -50,19 +50,37 @@ function Vitrina() {
                 <Play size={26} fill="currentColor" />
               </span>
             </span>
-            <span className="absolute right-3 bottom-3 left-[45%] flex items-center gap-2 rounded-xl bg-ink/85 px-3 py-2 text-[12px] leading-[1.3] font-semibold text-white sm:right-4 sm:bottom-4 sm:left-[38%] sm:px-3.5 sm:py-2.5 sm:text-[13px]">
+            <span className="absolute right-3 bottom-20 left-3 flex items-center gap-2 rounded-xl bg-ink/85 px-3 py-2 text-[12px] leading-[1.3] font-semibold text-white sm:px-3.5 sm:py-2.5 sm:text-[13px]">
               <Quote size={15} className="flex-none text-gold" aria-hidden="true" />
               {b.cita}
             </span>
           </button>
         )}
       </div>
-      {/* Guía 2026 flotando sobre la esquina, como en el original */}
-      <Aparecer as="figure" retraso={0.55} y={10} className="absolute bottom-0 -left-2 m-0 w-[42%] max-w-[200px] overflow-hidden rounded-2xl border-2 border-gold/50 bg-ink shadow-[0_20px_40px_rgba(0,0,0,.4)] sm:-left-6">
-        <img src={guia} alt={b.guiaAlt} loading="lazy" className="block aspect-[4/3] w-full object-cover" />
-        <figcaption className="flex items-center justify-center gap-1.5 px-2 py-2 text-center text-[10.5px] font-bold tracking-[0.06em] text-gold uppercase">
-          <Gift size={13} className="flex-none" aria-hidden="true" />
-          {b.guia}
+      {/* Guía 2026 de regalo: flota sobre la esquina inferior del video; al reproducir baja para no tapar los controles */}
+      <Aparecer
+        as="figure"
+        retraso={0.55}
+        y={10}
+        className={
+          'relative z-10 mx-0 mb-0 flex w-[88%] max-w-[340px] items-stretch self-start overflow-hidden rounded-[18px_18px_18px_4px] border border-gold/50 bg-ink shadow-[0_24px_48px_rgba(0,0,0,.45)] ring-4 ring-clay transition-[margin] duration-300 sm:-ml-4 ' +
+          (activo ? 'mt-4' : '-mt-14')
+        }
+      >
+        {/* Ícono de guía: libro abierto con sello PDF, en los colores de la marca */}
+        <span role="img" aria-label={b.guiaAlt} className="relative grid w-[34%] flex-none place-items-center bg-gradient-to-br from-gold/25 via-gold/10 to-transparent py-4">
+          <span className="relative grid size-[62px] place-items-center rounded-[14px_14px_14px_4px] border border-gold/60 bg-ink shadow-[0_8px_20px_rgba(0,0,0,.35)] sm:size-[68px]">
+            <BookOpenText size={30} strokeWidth={1.6} className="text-gold" aria-hidden="true" />
+            <span className="absolute -right-2 -bottom-2 rounded-md bg-gold px-1.5 py-0.5 text-[9px] leading-none font-extrabold tracking-[0.08em] text-ink">PDF</span>
+          </span>
+        </span>
+        <figcaption className="flex min-w-0 flex-col gap-1.5 px-3.5 py-3.5 sm:px-4 sm:py-4">
+          <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase">
+            <Gift size={12} className="flex-none" aria-hidden="true" />
+            {b.guia}
+          </span>
+          <strong className="font-serif text-[15px] leading-[1.2] font-semibold text-white sm:text-[16px]">{b.guiaTitulo}</strong>
+          <span className="text-[12px] leading-[1.35] text-pale">{b.guiaSub}</span>
         </figcaption>
       </Aparecer>
     </AparecerImagen>
@@ -108,7 +126,7 @@ export default function BannerCursoCafe() {
           </Elemento>
           <Elemento className="flex flex-col gap-3">
             <Link to={RUTA_CURSO_CAFE} className={classes({ variant: 'gold', size: 'xl', lift: true, className: 'self-stretch sm:self-start' })}>
-              <CirclePlay size={20} aria-hidden="true" />
+              <GraduationCap size={20} aria-hidden="true" />
               {b.cta}
               <ArrowRight />
             </Link>

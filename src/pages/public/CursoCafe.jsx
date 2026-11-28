@@ -12,6 +12,7 @@ import SiteHeader from '../../components/public/SiteHeader';
 import { classes } from '../../components/ui/Button';
 import { ArrowRight, Check } from '../../components/ui/Icons';
 import fotoTrilladora from '../../assets/curso-cafe/juan-sebastian-trilladora.jpg';
+import portadaVideo from '../../assets/curso-cafe/video-presentacion.jpg'; // miniatura del Short de presentación
 import caso1 from '../../assets/curso-cafe/caso-1.jpg';
 import caso2 from '../../assets/curso-cafe/caso-2.jpg';
 import caso3 from '../../assets/curso-cafe/caso-3.jpg';
@@ -154,10 +155,10 @@ function Hero() {
           <div className="min-w-0">
             <Video
               id={CURSO_CAFE.videoVenta}
-              img={fotoTrilladora}
+              img={portadaVideo}
               titulo={h.videoTitulo}
               etiqueta={h.video}
-              className="aspect-video rounded-[24px_72px_24px_6px] border-2 border-gold/40 shadow-[0_30px_60px_rgba(0,0,0,.35)]"
+              className="mx-auto aspect-[9/16] w-[82%] max-w-[340px] rounded-[24px_64px_24px_6px] border-2 border-gold/40 shadow-[0_30px_60px_rgba(0,0,0,.35)]"
             >
               <span className="absolute bottom-4 left-4 rounded-full bg-white/95 px-3.5 py-2 text-[13px] font-semibold text-ink">{h.video}</span>
             </Video>

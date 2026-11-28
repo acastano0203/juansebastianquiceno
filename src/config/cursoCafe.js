@@ -21,8 +21,8 @@ export const CURSO_CAFE = {
   horas: null,
   /** TODO: 'vida' para acceso de por vida, o número de meses. */
   acceso: null,
-  /** Video de la cabecera: el de la masterclass que tenía la página anterior. */
-  videoVenta: 'oWcuVpZ48Fs',
+  /** Video de presentación (YouTube Short, vertical 9:16): cabecera de la landing y banner de la portada. */
+  videoVenta: '_BhguC0-26o',
   /** WhatsApp de Juan Sebastián (mismo de la página anterior y del pie del sitio). */
   whatsapp: '573014140259',
 };
