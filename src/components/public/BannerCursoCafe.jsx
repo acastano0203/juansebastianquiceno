@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, BookOpenText, ChartLine, Gift, GraduationCap, Package, Play, Quote, ShieldCheck } from 'lucide-react';
+import { BookOpen, BookOpenText, ChartLine, Gift, GraduationCap, Package, Play, ShieldCheck } from 'lucide-react';
 import { useI18n } from '../../i18n/LanguageContext';
 import { CURSO_CAFE, RUTA_CURSO_CAFE } from '../../config/cursoCafe';
 import ReproductorYouTube from './ReproductorYouTube';
@@ -49,10 +49,6 @@ function Vitrina() {
               <span className="grid size-16 place-items-center rounded-full bg-gold text-ink shadow-[0_10px_30px_rgba(0,0,0,.35)] transition-transform group-hover:scale-110 md:size-[72px]">
                 <Play size={26} fill="currentColor" />
               </span>
-            </span>
-            <span className="absolute right-3 bottom-20 left-3 flex items-center gap-2 rounded-xl bg-ink/85 px-3 py-2 text-[12px] leading-[1.3] font-semibold text-white sm:px-3.5 sm:py-2.5 sm:text-[13px]">
-              <Quote size={15} className="flex-none text-gold" aria-hidden="true" />
-              {b.cita}
             </span>
           </button>
         )}

@@ -168,8 +168,11 @@ export default function ReproductorYouTube({ videoId, titulo, miniatura, textos,
   const sonando = estado === 'reproduciendo' || estado === 'arrancando';
 
   return (
-    <div ref={marco} className="group/rep absolute inset-0 bg-ink">
-      <div ref={destino} className="absolute inset-0 [&>iframe]:size-full" />
+    <div ref={marco} className="group/rep absolute inset-0 overflow-hidden bg-ink">
+      {/* El iframe es 80px más alto por arriba y por abajo que el marco visible. YouTube ajusta el video al ancho,
+          así que el video se ve completo, y lo que YouTube pinta en los bordes del iframe (barra con título,
+          foto y nombre del canal arriba; logo de YouTube abajo a la derecha) queda fuera del recorte. */}
+      <div ref={destino} className="absolute inset-x-0 -top-20 -bottom-20 [&>iframe]:size-full" />
 
       {/* Capa que recibe los clics: el iframe no recibe el mouse, así YouTube no muestra su barra */}
       <button type="button" onClick={alternar} aria-label={sonando ? textos.pausar : textos.reproducir} className="absolute inset-0 cursor-pointer border-0 bg-transparent p-0" />
