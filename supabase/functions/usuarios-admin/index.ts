@@ -11,7 +11,7 @@
 // Despliegue: supabase functions deploy usuarios-admin --no-verify-jwt   (el token se verifica abajo)
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.45.4';
 
-const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim());
+const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean);
 const BLOQUEO = '876000h'; // ~100 años: una cuenta desactivada no puede iniciar sesión
 
 function cors(origin: string | null) {

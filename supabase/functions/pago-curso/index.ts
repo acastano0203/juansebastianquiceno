@@ -14,7 +14,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 const MAX_BODY = 8 * 1024;
 const POR_HORA = 8; // intentos por IP: evita que llenen la tabla con basura
 
-const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim());
+const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean);
 
 function cors(origin: string | null) {
   const permitido = ORIGENES.includes('*') ? '*' : origin && ORIGENES.includes(origin) ? origin : ORIGENES[0];

@@ -12,7 +12,7 @@ const POR_HORA = 10;
 const POR_DIA = 40;
 const MAX_BODY = 64 * 1024;
 
-const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim());
+const ORIGENES = (Deno.env.get('ALLOWED_ORIGINS') || '*').split(',').map((s) => s.trim().replace(/\/+$/, '')).filter(Boolean);
 
 function cors(origin: string | null) {
   const permitido = ORIGENES.includes('*') ? '*' : origin && ORIGENES.includes(origin) ? origin : ORIGENES[0];
